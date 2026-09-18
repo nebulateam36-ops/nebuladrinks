@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NEBULA — Рецептуры</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f13;
+    color: #e8e8ec;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a1a24 0%, #0f0f13 100%);
+    padding: 20px 16px;
+    text-align: center;
+    border-bottom: 1px solid #2a2a38;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    font-size: 11px;
+    color: #6b6b7b;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  .container {
+    padding: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .category-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b6b7b;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 20px 0 10px 4px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .card {
+    background: #1a1a24;
+    border: 1px solid #2a2a38;
+    border-radius: 14px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card:active {
+    transform: scale(0.97);
+    background: #22222e;
+  }
+
+  .card .emoji {
+    font-size: 26px;
+  }
+
+  .card .name {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .card .sub {
+    font-size: 10px;
+    color: #6b6b7b;
+  }
+
+  /* Модальное окно */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 100;
+    overflow-y: auto;
+    padding: 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-overlay.active {
+    display: block;
+  }
+
+  .modal {
+    background: #1a1a24;
+    border: 1px solid #2a2a38;
+    border-radius: 18px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    animation: slideUp 0.25s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .close-btn {
+    background: #2a2a38;
+    border: none;
+    color: #e8e8ec;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 10px;
+  }
+
+  .volume-input {
+    background: #0f0f13;
+    border: 1px solid #2a2a38;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .volume-input label {
+    font-size: 13px;
+    color: #a0a0b0;
+    flex: 1;
+  }
+
+  .volume-input input {
+    background: #1a1a24;
+    border: 1px solid #3a3a48;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #e8e8ec;
+    font-size: 16px;
+    font-weight: 600;
+    width: 90px;
+    text-align: center;
+    outline: none;
+  }
+
+  .volume-input input:focus {
+    border-color: #a78bfa;
+  }
+
+  .volume-input .unit {
+    font-size: 13px;
+    color: #6b6b7b;
+  }
+
+  .section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b6b7b;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 18px 0 10px 0;
+  }
+
+  .ingredients {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ingredient {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0f0f13;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .ingredient .ing-name {
+    color: #c0c0d0;
+    flex: 1;
+  }
+
+  .ingredient .ing-value {
+    font-weight: 700;
+    color: #a78bfa;
+    white-space: nowrap;
+    margin-left: 10px;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step {
+    background: #0f0f13;
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+  }
+
+  .step-num {
+    background: linear-gradient(135deg, #a78bfa, #60a5fa);
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #c0c0d0;
+  }
+
+  .note {
+    background: rgba(167, 139, 250, 0.1);
+    border-left: 3px solid #a78bfa;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #b0b0c0;
+    margin-top: 14px;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b6b7b;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>NEBULA</h1>
+  <p>РЕЦЕПТУРЫ И РАСЧЁТ</p>
+</header>
+
+<div class="container" id="app"></div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+// ============================================================
+// ДАННЫЕ НАПИТКОВ
+// ============================================================
+// baseVolume — объём, на который рассчитан рецепт (в литрах)
+// ingredients — список ингредиентов с количеством на baseVolume
+// steps — пошаговая инструкция (без чисел, числа подставляются)
+// ============================================================
+
+const drinks = [
+  // ---------- ХОЛОДНЫЕ ЧАИ ----------
+  {
+    id: 'peach',
+    category: 'Холодные чаи',
+    name: 'Персиковый чай',
+    emoji: '🍑',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Чёрный чай', value: 60, unit: 'г' },
+      { name: 'Вода для заваривания', value: 3.0, unit: 'л' },
+      { name: 'Персиковый сироп', value: 0.8, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.35, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.15, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Нагреть {water} воды до 90–95 °C. Не доводить до бурного кипения.',
+      'Внести {tea} чёрного чая. Не кипятить вместе с водой.',
+      'Заварить до нужной крепости (ориентир 5–8 минут). Сразу отфильтровать лист.',
+      'В тёплую основу добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {peach} персикового сиропа. Перемешать 1–2 минуты.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Быстро охладить основу. Не держать тёплой без контроля времени.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус. При необходимости профильтровать.',
+      'Разлить по бутылкам 300 мл, закрыть, нанести маркировку, убрать в холодильник.'
+    ],
+    note: 'Для сиропного варианта осадка быть не должно. Если появился — профильтровать.'
+  },
+  {
+    id: 'strawberry-tea',
+    category: 'Холодные чаи',
+    name: 'Клубничный чай',
+    emoji: '🍓',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Чёрный чай', value: 60, unit: 'г' },
+      { name: 'Вода для заваривания', value: 3.0, unit: 'л' },
+      { name: 'Клубничный сироп', value: 0.9, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.30, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.12, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Нагреть {water} воды до 90–95 °C.',
+      'Внести {tea} чёрного чая. Не кипятить.',
+      'Заварить до нужной крепости. Сразу отфильтровать лист.',
+      'В тёплую основу добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {strawberry} клубничного сиропа. Перемешать 1–2 минуты.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Быстро охладить основу.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус. При необходимости профильтровать.',
+      'Разлить по бутылкам 300 мл, закрыть, нанести маркировку, убрать в холодильник.'
+    ],
+    note: 'Если клубничный сироп уже сладкий, сахарный сироп можно уменьшить или не добавлять — корректировать по вкусу.'
+  },
+  {
+    id: 'berry-tea',
+    category: 'Холодные чаи',
+    name: 'Ягодный чай',
+    emoji: '🫐',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Чёрный чай', value: 60, unit: 'г' },
+      { name: 'Вода для заваривания', value: 3.0, unit: 'л' },
+      { name: 'Ягодный сироп', value: 0.9, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.30, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.12, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Нагреть {water} воды до 90–95 °C.',
+      'Внести {tea} чёрного чая. Не кипятить.',
+      'Заварить до нужной крепости. Сразу отфильтровать лист.',
+      'В тёплую основу добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {berry} ягодного сиропа. Перемешать 1–2 минуты.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Быстро охладить основу.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус. При необходимости профильтровать.',
+      'Разлить по бутылкам 300 мл, закрыть, нанести маркировку, убрать в холодильник.'
+    ],
+    note: 'Можно использовать малиновый сироп вместо ягодного — вкус будет ярче.'
+  },
+  {
+    id: 'passion-orange',
+    category: 'Холодные чаи',
+    name: 'Маракуйя-апельсин',
+    emoji: '🥭',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Зелёный чай', value: 55, unit: 'г' },
+      { name: 'Вода для заваривания', value: 3.0, unit: 'л' },
+      { name: 'Пюре маракуйи', value: 0.65, unit: 'кг' },
+      { name: 'Апельсиновый сок', value: 1.2, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.35, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Нагреть {water} воды до 75–85 °C (для зелёного чая).',
+      'Внести {tea} зелёного чая. Не кипятить.',
+      'Заварить до нужной крепости. Сразу отфильтровать лист.',
+      'В тёплую основу добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {passion} пюре маракуйи. Перемешать.',
+      'Добавить {orange} апельсинового сока. Перемешать 1–2 минуты.',
+      'Быстро охладить основу.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус. При необходимости профильтровать.',
+      'Разлить по бутылкам 300 мл, закрыть, нанести маркировку, убрать в холодильник.'
+    ],
+    note: 'Апельсиновый сок лучше свежевыжатый. Если пюре маракуйи даёт осадок — профильтровать.'
+  },
+  {
+    id: 'mango-passion',
+    category: 'Холодные чаи',
+    name: 'Манго-маракуйя',
+    emoji: '🥭',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Зелёный чай', value: 55, unit: 'г' },
+      { name: 'Вода для заваривания', value: 3.0, unit: 'л' },
+      { name: 'Манговое пюре', value: 0.65, unit: 'кг' },
+      { name: 'Пюре маракуйи', value: 0.35, unit: 'кг' },
+      { name: 'Сахарный сироп', value: 0.30, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.10, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Нагреть {water} воды до 75–85 °C.',
+      'Внести {tea} зелёного чая. Не кипятить.',
+      'Заварить до нужной крепости. Сразу отфильтровать лист.',
+      'В тёплую основу добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {mango} мангового пюре. Перемешать.',
+      'Добавить {passion} пюре маракуйи. Перемешать.',
+      'Добавить {lemon} лимонного сока. Перемешать 1–2 минуты.',
+      'Быстро охладить основу.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус. При необходимости профильтровать.',
+      'Разлить по бутылкам 300 мл, закрыть, нанести маркировку, убрать в холодильник.'
+    ],
+    note: 'Если используете сиропы вместо пюре — берите те же объёмы, но следите за сладостью.'
+  },
+  {
+    id: 'lemon-mint',
+    category: 'Холодные чаи',
+    name: 'Лимон-мята',
+    emoji: '🍋',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Зелёный чай', value: 55, unit: 'г' },
+      { name: 'Вода для заваривания', value: 3.0, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.55, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.45, unit: 'л' },
+      { name: 'Мятный настой/экстракт', value: 'по рецептуре', unit: '', isCustom: true },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Нагреть {water} воды до 75–85 °C.',
+      'Внести {tea} зелёного чая. Не кипятить.',
+      'Заварить до нужной крепости. Сразу отфильтровать лист.',
+      'В тёплую основу добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Добавить мятный настой/экстракт по утверждённой рецептуре. Перемешать.',
+      'Быстро охладить основу.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус. При необходимости профильтровать.',
+      'Разлить по бутылкам 300 мл, закрыть, нанести маркировку, убрать в холодильник.'
+    ],
+    note: 'Мятный экстракт добавляйте постепенно — он может перебить вкус. Лучше меньше, чем больше.'
+  },
+
+  // ---------- МАТЧА ----------
+  {
+    id: 'matcha',
+    category: 'Матча',
+    name: 'Классический зелёный матча',
+    emoji: '🍵',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Матча', value: 50, unit: 'г' },
+      { name: 'Вода 70–80 °C для диспергирования', value: 0.85, unit: 'л' },
+      { name: 'Сахарный сироп', value: 'по рецептуре', unit: '', isCustom: true },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Взвесить {matcha} матча. Просеять через мелкое сито.',
+      'В отдельной ёмкости взять {dispWater} воды температурой 70–80 °C. Не использовать кипяток.',
+      'Вносить матча постепенно, постоянно перемешивая венчиком или миксером. Получить однородную суспензию без комков.',
+      'Добавить сахарный сироп по рецептуре. Перемешать.',
+      'Перелить матча-основу в основную ёмкость и довести подготовленной холодной водой до {total}.',
+      'Перемешать до однородности. Дать крупной пене осесть.',
+      'Охладить и перед розливом снова аккуратно перемешать.',
+      'Разлить по бутылкам 300 мл, закрыть, нанести маркировку, убрать в холодильник.'
+    ],
+    note: 'Матча естественно может оседать — это нормально. Не обещать покупателю «полностью прозрачный» напиток.'
+  },
+
+  // ---------- ЛАТТЕ ----------
+  {
+    id: 'classic-latte',
+    category: 'Латте',
+    name: 'Классический латте',
+    emoji: '☕',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Кофейная база', value: 0.9, unit: 'л' },
+      { name: 'Молоко', value: 6.0, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.25, unit: 'л' },
+      { name: 'Молоко/подготовленная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Приготовить концентрированную кофейную базу (~0,9 л). Зафиксировать фактический выход.',
+      'Отфильтровать кофейную базу от частиц и быстро охладить.',
+      'В чистую ёмкость налить холодное молоко ({milk}).',
+      'Добавить {sugar} сахарного сиропа. Перемешать.',
+      'Влить охлаждённую кофейную базу ({coffee}). Перемешать до однородности.',
+      'Довести объём молоком/подготовленной водой до {total}.',
+      'Проверить вкус, однородность и внешний вид.',
+      'Охладить готовую партию и разлить по бутылкам 300 мл.',
+      'Закрыть, нанести маркировку, сразу убрать в холодильник.'
+    ],
+    note: 'Молоко и готовый латте — скоропортящаяся продукция. Нужна непрерывная холодовая цепь и обоснованный срок годности.'
+  },
+  {
+    id: 'vanilla-latte',
+    category: 'Латте',
+    name: 'Ванильный латте',
+    emoji: '🍦',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Кофейная база', value: 0.9, unit: 'л' },
+      { name: 'Молоко', value: 5.9, unit: 'л' },
+      { name: 'Ванильный сироп', value: 0.35, unit: 'л' },
+      { name: 'Молоко/подготовленная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Приготовить кофейную базу (~0,9 л). Отфильтровать, охладить.',
+      'В чистую ёмкость налить холодное молоко ({milk}).',
+      'Добавить {vanilla} ванильного сиропа. Перемешать.',
+      'Влить охлаждённую кофейную базу ({coffee}). Перемешать.',
+      'Довести объём молоком/подготовленной водой до {total}.',
+      'Проверить вкус и однородность.',
+      'Охладить и разлить по бутылкам 300 мл.',
+      'Закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Порядок: охлаждённая кофейная база → молоко → сироп → смешивание → доведение до объёма → охлаждение → розлив.'
+  },
+  {
+    id: 'caramel-latte',
+    category: 'Латте',
+    name: 'Карамельный латте',
+    emoji: '🍮',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Кофейная база', value: 0.9, unit: 'л' },
+      { name: 'Молоко', value: 5.9, unit: 'л' },
+      { name: 'Карамельный сироп', value: 0.35, unit: 'л' },
+      { name: 'Молоко/подготовленная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Приготовить кофейную базу (~0,9 л). Отфильтровать, охладить.',
+      'В чистую ёмкость налить холодное молоко ({milk}).',
+      'Добавить {caramel} карамельного сиропа. Перемешать.',
+      'Влить охлаждённую кофейную базу ({coffee}). Перемешать.',
+      'Довести объём молоком/подготовленной водой до {total}.',
+      'Проверить вкус и однородность.',
+      'Охладить и разлить по бутылкам 300 мл.',
+      'Закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Карамельный сироп хорошо сочетается с классической кофейной базой.'
+  },
+  {
+    id: 'pistachio-latte',
+    category: 'Латте',
+    name: 'Фисташковый латте',
+    emoji: '🥜',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Кофейная база', value: 0.9, unit: 'л' },
+      { name: 'Молоко', value: 5.9, unit: 'л' },
+      { name: 'Фисташковый сироп', value: 0.35, unit: 'л' },
+      { name: 'Молоко/подготовленная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Приготовить кофейную базу (~0,9 л). Отфильтровать, охладить.',
+      'В чистую ёмкость налить холодное молоко ({milk}).',
+      'Добавить {pistachio} фисташкового сиропа. Перемешать.',
+      'Влить охлаждённую кофейную базу ({coffee}). Перемешать.',
+      'Довести объём молоком/подготовленной водой до {total}.',
+      'Проверить вкус и однородность.',
+      'Охладить и разлить по бутылкам 300 мл.',
+      'Закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Фисташковый сироп может давать лёгкий осадок — перед розливом перемешать.'
+  },
+  {
+    id: 'strawberry-latte',
+    category: 'Латте',
+    name: 'Клубничный латте',
+    emoji: '🍓',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Кофейная база', value: 0.9, unit: 'л' },
+      { name: 'Молоко', value: 5.4, unit: 'л' },
+      { name: 'Клубничное пюре/сироп', value: 0.8, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.25, unit: 'л' },
+      { name: 'Молоко/подготовленная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Приготовить кофейную базу (~0,9 л). Отфильтровать, охладить.',
+      'В чистую ёмкость налить холодное молоко ({milk}).',
+      'Добавить {strawberry} клубничного пюре/сиропа. Перемешать.',
+      'Добавить {sugar} сахарного сиропа. Перемешать.',
+      'Влить охлаждённую кофейную базу ({coffee}). Перемешать.',
+      'Довести объём молоком/подготовленной водой до {total}.',
+      'Проверить вкус и однородность.',
+      'Охладить и разлить по бутылкам 300 мл.',
+      'Закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Если используете клубничный сироп, сахарный сироп можно уменьшить или убрать.'
+  },
+  {
+    id: 'coconut-latte',
+    category: 'Латте',
+    name: 'Кокосовый латте',
+    emoji: '🥥',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Кофейная база', value: 0.9, unit: 'л' },
+      { name: 'Молоко', value: 5.4, unit: 'л' },
+      { name: 'Кокосовый напиток', value: 0.8, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.25, unit: 'л' },
+      { name: 'Молоко/подготовленная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Приготовить кофейную базу (~0,9 л). Отфильтровать, охладить.',
+      'В чистую ёмкость налить холодное молоко ({milk}).',
+      'Добавить {coconut} кокосового напитка. Перемешать.',
+      'Добавить {sugar} сахарного сиропа. Перемешать.',
+      'Влить охлаждённую кофейную базу ({coffee}). Перемешать.',
+      'Довести объём молоком/подготовленной водой до {total}.',
+      'Проверить вкус и однородность.',
+      'Охладить и разлить по бутылкам 300 мл.',
+      'Закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Кокосовый напиток может расслаиваться — перед розливом тщательно перемешать.'
+  }
+];
+
+// ============================================================
+// ЛОГИКА
+// ============================================================
+
+const app = document.getElementById('app');
+const overlay = document.getElementById('modalOverlay');
+const modalContent = document.getElementById('modalContent');
+
+let currentDrink = null;
+let currentVolume = 10;
+
+// --- Рендер главного экрана ---
+function renderHome() {
+  const categories = {};
+  drinks.forEach(d => {
+    if (!categories[d.category]) categories[d.category] = [];
+    categories[d.category].push(d);
+  });
+
+  let html = '';
+  for (const cat in categories) {
+    html += `<div class="category-title">${cat}</div>`;
+    html += '<div class="grid">';
+    categories[cat].forEach(d => {
+      html += `
+        <div class="card" onclick="openDrink('${d.id}')">
+          <div class="emoji">${d.emoji}</div>
+          <div class="name">${d.name}</div>
+          <div class="sub">${d.baseVolume} л база</div>
+        </div>
+      `;
+    });
+    html += '</div>';
+  }
+  app.innerHTML = html;
+}
+
+// --- Открыть напиток ---
+function openDrink(id) {
+  currentDrink = drinks.find(d => d.id === id);
+  currentVolume = currentDrink.baseVolume;
+  renderModal();
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+// --- Закрыть ---
+function closeModal() {
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+overlay.addEventListener('click', (e) => {
+  if (e.target === overlay) closeModal();
+});
+
+// --- Пересчёт ингредиентов ---
+function scaleValue(baseValue, baseVolume, targetVolume) {
+  if (typeof baseValue === 'string') return baseValue;
+  const scaled = (baseValue / baseVolume) * targetVolume;
+  return formatNumber(scaled);
+}
+
+function formatNumber(num) {
+  if (num >= 100) return Math.round(num).toString();
+  if (num >= 10) return num.toFixed(1).replace(/\.0$/, '');
+  if (num >= 1) return num.toFixed(2).replace(/\.?0+$/, '');
+  return num.toFixed(3).replace(/\.?0+$/, '');
+}
+
+// --- Рендер модального окна ---
+function renderModal() {
+  const d = currentDrink;
+  const v = currentVolume;
+  const ratio = v / d.baseVolume;
+
+  // Ингредиенты
+  let ingHtml = '';
+  d.ingredients.forEach(ing => {
+    let displayValue;
+    if (ing.isTopUp) {
+      displayValue = `до ${formatNumber(v)} ${ing.unit}`;
+    } else if (ing.isCustom) {
+      displayValue = ing.value;
+    } else {
+      const scaled = ing.value * ratio;
+      displayValue = `${formatNumber(scaled)} ${ing.unit}`;
+    }
+    ingHtml += `
+      <div class="ingredient">
+        <span class="ing-name">${ing.name}</span>
+        <span class="ing-value">${displayValue}</span>
+      </div>
+    `;
+  });
+
+  // Шаги — подставляем числа
+  let stepsHtml = '';
+  d.steps.forEach((step, i) => {
+    let text = step;
+    // Подстановка значений
+    d.ingredients.forEach(ing => {
+      const key = getKeyForIngredient(ing.name);
+      if (key && text.includes(`{${key}}`)) {
+        let val;
+        if (ing.isTopUp) {
+          val = `до ${formatNumber(v)} ${ing.unit}`;
+        } else if (ing.isCustom) {
+          val = ing.value;
+        } else {
+          val = `${formatNumber(ing.value * ratio)} ${ing.unit}`;
+        }
+        text = text.replace(new RegExp(`\\{${key}\\}`, 'g'), val);
+      }
+    });
+    // {total}
+    text = text.replace(/\{total\}/g, `${formatNumber(v)} л`);
+    stepsHtml += `
+      <div class="step">
+        <div class="step-num">${i + 1}</div>
+        <div class="step-text">${text}</div>
+      </div>
+    `;
+  });
+
+  modalContent.innerHTML = `
+    <div class="modal-header">
+      <h2>${d.emoji} ${d.name}</h2>
+      <button class="close-btn" onclick="closeModal()">×</button>
+    </div>
+
+    <div class="volume-input">
+      <label>Хочу получить:</label>
+      <input type="number" id="volumeInput" value="${v}" min="0.5" step="0.5" inputmode="decimal">
+      <span class="unit">л</span>
+    </div>
+
+    <div class="section-title">Ингредиенты</div>
+    <div class="ingredients">${ingHtml}</div>
+
+    <div class="section-title">Приготовление</div>
+    <div class="steps">${stepsHtml}</div>
+
+    ${d.note ? `<div class="note">💡 ${d.note}</div>` : ''}
+  `;
+
+  // Обработчик изменения объёма
+  const input = document.getElementById('volumeInput');
+  input.addEventListener('input', (e) => {
+    let val = parseFloat(e.target.value);
+    if (isNaN(val) || val <= 0) return;
+    currentVolume = val;
+    renderModal();
+    // Восстановить фокус
+    const newInput = document.getElementById('volumeInput');
+    newInput.focus();
+    newInput.setSelectionRange(newInput.value.length, newInput.value.length);
+  });
+}
+
+// --- Ключи для подстановки в шаги ---
+function getKeyForIngredient(name) {
+  const map = {
+    'Чёрный чай': 'tea',
+    'Зелёный чай': 'tea',
+    'Вода для заваривания': 'water',
+    'Персиковый сироп': 'peach',
+    'Клубничный сироп': 'strawberry',
+    'Ягодный сироп': 'berry',
+    'Пюре маракуйи': 'passion',
+    'Апельсиновый сок': 'orange',
+    'Манговое пюре': 'mango',
+    'Лимонный сок': 'lemon',
+    'Сахарный сироп': 'sugar',
+    'Мятный настой/экстракт': 'mint',
+    'Матча': 'matcha',
+    'Вода 70–80 °C для диспергирования': 'dispWater',
+    'Кофейная база': 'coffee',
+    'Молоко': 'milk',
+    'Ванильный сироп': 'vanilla',
+    'Карамельный сироп': 'caramel',
+    'Фисташковый сироп': 'pistachio',
+    'Клубничное пюре/сироп': 'strawberry',
+    'Кокосовый напиток': 'coconut'
+  };
+  return map[name] || null;
+}
+
+// --- Старт ---
+renderHome();
+</script>
+
+</body>
+</html>
