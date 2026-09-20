@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NEBULA — Рецептуры</title>
+<title>NEBULA — Рецептуры и расчёт</title>
 <style>
   * {
     box-sizing: border-box;
@@ -90,36 +90,23 @@
     background: #22222e;
   }
 
-  .card .emoji {
-    font-size: 26px;
-  }
-
-  .card .name {
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-
-  .card .sub {
-    font-size: 10px;
-    color: #6b6b7b;
-  }
+  .card .emoji { font-size: 26px; }
+  .card .name { font-size: 13px; font-weight: 600; line-height: 1.3; }
+  .card .sub { font-size: 10px; color: #6b6b7b; }
 
   /* Модальное окно */
   .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.85);
     z-index: 100;
     overflow-y: auto;
     padding: 16px;
     -webkit-overflow-scrolling: touch;
   }
 
-  .modal-overlay.active {
-    display: block;
-  }
+  .modal-overlay.active { display: block; }
 
   .modal {
     background: #1a1a24;
@@ -196,14 +183,9 @@
     outline: none;
   }
 
-  .volume-input input:focus {
-    border-color: #a78bfa;
-  }
+  .volume-input input:focus { border-color: #a78bfa; }
 
-  .volume-input .unit {
-    font-size: 13px;
-    color: #6b6b7b;
-  }
+  .volume-input .unit { font-size: 13px; color: #6b6b7b; }
 
   .section-title {
     font-size: 12px;
@@ -214,11 +196,7 @@
     margin: 18px 0 10px 0;
   }
 
-  .ingredients {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+  .ingredients { display: flex; flex-direction: column; gap: 6px; }
 
   .ingredient {
     display: flex;
@@ -230,23 +208,10 @@
     font-size: 14px;
   }
 
-  .ingredient .ing-name {
-    color: #c0c0d0;
-    flex: 1;
-  }
+  .ingredient .ing-name { color: #c0c0d0; flex: 1; }
+  .ingredient .ing-value { font-weight: 700; color: #a78bfa; white-space: nowrap; margin-left: 10px; }
 
-  .ingredient .ing-value {
-    font-weight: 700;
-    color: #a78bfa;
-    white-space: nowrap;
-    margin-left: 10px;
-  }
-
-  .steps {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  .steps { display: flex; flex-direction: column; gap: 10px; }
 
   .step {
     background: #0f0f13;
@@ -270,11 +235,7 @@
     flex-shrink: 0;
   }
 
-  .step-text {
-    font-size: 13px;
-    line-height: 1.5;
-    color: #c0c0d0;
-  }
+  .step-text { font-size: 13px; line-height: 1.5; color: #c0c0d0; }
 
   .note {
     background: rgba(167, 139, 250, 0.1);
@@ -287,11 +248,160 @@
     margin-top: 14px;
   }
 
+  /* ===== БЛОК СЕБЕСТОИМОСТИ ===== */
+  .cost-block {
+    background: #0f0f13;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+
+  .cost-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 0;
+    border-bottom: 1px solid #1a1a24;
+  }
+
+  .cost-row:last-child { border-bottom: none; }
+
+  .cost-row .cost-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e8e8ec;
+  }
+
+  .cost-row .cost-usage {
+    font-size: 11px;
+    color: #6b6b7b;
+  }
+
+  .cost-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .cost-inputs label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 10px;
+    color: #6b6b7b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .cost-inputs input {
+    background: #1a1a24;
+    border: 1px solid #3a3a48;
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #e8e8ec;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    width: 100%;
+  }
+
+  .cost-inputs input:focus { border-color: #34d399; }
+
+  .cost-result {
+    font-size: 12px;
+    color: #34d399;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* Итоги */
+  .totals {
+    background: linear-gradient(135deg, #1a1a24 0%, #0f0f13 100%);
+    border: 1px solid #2a2a38;
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 14px;
+  }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 14px;
+  }
+
+  .total-row .label { color: #a0a0b0; }
+  .total-row .value { font-weight: 700; color: #e8e8ec; }
+
+  .total-row.big {
+    border-top: 1px solid #2a2a38;
+    margin-top: 8px;
+    padding-top: 14px;
+    font-size: 16px;
+  }
+
+  .total-row.big .value { color: #34d399; font-size: 18px; }
+
+  .profit-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid #2a2a38;
+  }
+
+  .profit-input label {
+    font-size: 12px;
+    color: #a0a0b0;
+    flex: 1;
+  }
+
+  .profit-input input {
+    background: #1a1a24;
+    border: 1px solid #3a3a48;
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #e8e8ec;
+    font-size: 14px;
+    font-weight: 600;
+    width: 100px;
+    text-align: center;
+    outline: none;
+  }
+
+  .profit-input input:focus { border-color: #34d399; }
+
+  .profit-result {
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(52, 211, 153, 0.1);
+    border-radius: 10px;
+    font-size: 13px;
+    color: #34d399;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .profit-result.negative {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+  }
+
   .empty {
     text-align: center;
     padding: 40px 20px;
     color: #6b6b7b;
     font-size: 14px;
+  }
+
+  .hint {
+    font-size: 11px;
+    color: #6b6b7b;
+    line-height: 1.5;
+    margin-top: 6px;
+    padding: 0 4px;
   }
 </style>
 </head>
@@ -299,7 +409,7 @@
 
 <header>
   <h1>NEBULA</h1>
-  <p>РЕЦЕПТУРЫ И РАСЧЁТ</p>
+  <p>РЕЦЕПТУРЫ • РАСЧЁТ • ПРИБЫЛЬ</p>
 </header>
 
 <div class="container" id="app"></div>
@@ -312,13 +422,8 @@
 // ============================================================
 // ДАННЫЕ НАПИТКОВ
 // ============================================================
-// baseVolume — объём, на который рассчитан рецепт (в литрах)
-// ingredients — список ингредиентов с количеством на baseVolume
-// steps — пошаговая инструкция (без чисел, числа подставляются)
-// ============================================================
 
 const drinks = [
-  // ---------- ХОЛОДНЫЕ ЧАИ ----------
   {
     id: 'peach',
     category: 'Холодные чаи',
@@ -487,10 +592,8 @@ const drinks = [
       'Оценить цвет, запах, вкус. При необходимости профильтровать.',
       'Разлить по бутылкам 300 мл, закрыть, нанести маркировку, убрать в холодильник.'
     ],
-    note: 'Мятный экстракт добавляйте постепенно — он может перебить вкус. Лучше меньше, чем больше.'
+    note: 'Мятный экстракт добавляйте постепенно — он может перебить вкус.'
   },
-
-  // ---------- МАТЧА ----------
   {
     id: 'matcha',
     category: 'Матча',
@@ -513,10 +616,8 @@ const drinks = [
       'Охладить и перед розливом снова аккуратно перемешать.',
       'Разлить по бутылкам 300 мл, закрыть, нанести маркировку, убрать в холодильник.'
     ],
-    note: 'Матча естественно может оседать — это нормально. Не обещать покупателю «полностью прозрачный» напиток.'
+    note: 'Матча естественно может оседать — это нормально.'
   },
-
-  // ---------- ЛАТТЕ ----------
   {
     id: 'classic-latte',
     category: 'Латте',
@@ -540,7 +641,7 @@ const drinks = [
       'Охладить готовую партию и разлить по бутылкам 300 мл.',
       'Закрыть, нанести маркировку, сразу убрать в холодильник.'
     ],
-    note: 'Молоко и готовый латте — скоропортящаяся продукция. Нужна непрерывная холодовая цепь и обоснованный срок годности.'
+    note: 'Молоко и готовый латте — скоропортящаяся продукция. Нужна непрерывная холодовая цепь.'
   },
   {
     id: 'vanilla-latte',
@@ -564,7 +665,7 @@ const drinks = [
       'Охладить и разлить по бутылкам 300 мл.',
       'Закрыть, маркировать, убрать в холодильник.'
     ],
-    note: 'Порядок: охлаждённая кофейная база → молоко → сироп → смешивание → доведение до объёма → охлаждение → розлив.'
+    note: 'Порядок: кофейная база → молоко → сироп → смешивание → доведение до объёма → охлаждение → розлив.'
   },
   {
     id: 'caramel-latte',
@@ -679,6 +780,43 @@ const modalContent = document.getElementById('modalContent');
 let currentDrink = null;
 let currentVolume = 10;
 
+// Хранилище цен: { drinkId: { ingredientName: { price: number, packSize: number } } }
+const priceStorage = {};
+
+// Загрузка из localStorage
+function loadPrices() {
+  try {
+    const saved = localStorage.getItem('nebula_prices');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      Object.assign(priceStorage, parsed);
+    }
+  } catch (e) { console.warn('Не удалось загрузить цены', e); }
+}
+
+function savePrices() {
+  try {
+    localStorage.setItem('nebula_prices', JSON.stringify(priceStorage));
+  } catch (e) { console.warn('Не удалось сохранить цены', e); }
+}
+
+function getPrice(drinkId, ingName) {
+  if (!priceStorage[drinkId]) priceStorage[drinkId] = {};
+  if (!priceStorage[drinkId][ingName]) {
+    priceStorage[drinkId][ingName] = { price: '', packSize: '' };
+  }
+  return priceStorage[drinkId][ingName];
+}
+
+function setPrice(drinkId, ingName, field, value) {
+  if (!priceStorage[drinkId]) priceStorage[drinkId] = {};
+  if (!priceStorage[drinkId][ingName]) {
+    priceStorage[drinkId][ingName] = { price: '', packSize: '' };
+  }
+  priceStorage[drinkId][ingName][field] = value;
+  savePrices();
+}
+
 // --- Рендер главного экрана ---
 function renderHome() {
   const categories = {};
@@ -724,18 +862,18 @@ overlay.addEventListener('click', (e) => {
   if (e.target === overlay) closeModal();
 });
 
-// --- Пересчёт ингредиентов ---
-function scaleValue(baseValue, baseVolume, targetVolume) {
-  if (typeof baseValue === 'string') return baseValue;
-  const scaled = (baseValue / baseVolume) * targetVolume;
-  return formatNumber(scaled);
-}
-
+// --- Форматирование чисел ---
 function formatNumber(num) {
+  if (num === 0) return '0';
   if (num >= 100) return Math.round(num).toString();
   if (num >= 10) return num.toFixed(1).replace(/\.0$/, '');
   if (num >= 1) return num.toFixed(2).replace(/\.?0+$/, '');
   return num.toFixed(3).replace(/\.?0+$/, '');
+}
+
+function formatMoney(num) {
+  if (!isFinite(num) || num <= 0) return '—';
+  return num.toFixed(2) + ' ₽';
 }
 
 // --- Рендер модального окна ---
@@ -753,8 +891,7 @@ function renderModal() {
     } else if (ing.isCustom) {
       displayValue = ing.value;
     } else {
-      const scaled = ing.value * ratio;
-      displayValue = `${formatNumber(scaled)} ${ing.unit}`;
+      displayValue = `${formatNumber(ing.value * ratio)} ${ing.unit}`;
     }
     ingHtml += `
       <div class="ingredient">
@@ -764,31 +901,68 @@ function renderModal() {
     `;
   });
 
-  // Шаги — подставляем числа
+  // Шаги
   let stepsHtml = '';
   d.steps.forEach((step, i) => {
     let text = step;
-    // Подстановка значений
     d.ingredients.forEach(ing => {
       const key = getKeyForIngredient(ing.name);
       if (key && text.includes(`{${key}}`)) {
         let val;
-        if (ing.isTopUp) {
-          val = `до ${formatNumber(v)} ${ing.unit}`;
-        } else if (ing.isCustom) {
-          val = ing.value;
-        } else {
-          val = `${formatNumber(ing.value * ratio)} ${ing.unit}`;
-        }
+        if (ing.isTopUp) val = `до ${formatNumber(v)} ${ing.unit}`;
+        else if (ing.isCustom) val = ing.value;
+        else val = `${formatNumber(ing.value * ratio)} ${ing.unit}`;
         text = text.replace(new RegExp(`\\{${key}\\}`, 'g'), val);
       }
     });
-    // {total}
     text = text.replace(/\{total\}/g, `${formatNumber(v)} л`);
     stepsHtml += `
       <div class="step">
         <div class="step-num">${i + 1}</div>
         <div class="step-text">${text}</div>
+      </div>
+    `;
+  });
+
+  // === БЛОК СЕБЕСТОИМОСТИ ===
+  let costHtml = '';
+  d.ingredients.forEach(ing => {
+    if (ing.isTopUp || ing.isCustom) return; // пропускаем воду и "по рецептуре"
+    const usage = ing.value * ratio;
+    const saved = getPrice(d.id, ing.name);
+    const price = parseFloat(saved.price) || 0;
+    const packSize = parseFloat(saved.packSize) || 0;
+
+    let costPerUnit = 0;
+    let costForUsage = 0;
+    if (price > 0 && packSize > 0) {
+      costPerUnit = price / packSize;
+      costForUsage = costPerUnit * usage;
+    }
+
+    costHtml += `
+      <div class="cost-row">
+        <div>
+          <div class="cost-name">${ing.name}</div>
+          <div class="cost-usage">Расход: ${formatNumber(usage)} ${ing.unit}</div>
+        </div>
+        <div class="cost-inputs">
+          <label>
+            Цена упаковки, ₽
+            <input type="number" inputmode="decimal" min="0" step="0.01"
+              value="${saved.price}"
+              oninput="onPriceInput('${d.id}', '${ing.name.replace(/'/g, "\\'")}', 'price', this.value)">
+          </label>
+          <label>
+            Объём упак., ${ing.unit}
+            <input type="number" inputmode="decimal" min="0" step="0.01"
+              value="${saved.packSize}"
+              oninput="onPriceInput('${d.id}', '${ing.name.replace(/'/g, "\\'")}', 'packSize', this.value)">
+          </label>
+        </div>
+        <div class="cost-result" id="cost-result-${d.id}-${ing.name.replace(/\s/g, '_')}">
+          ${costForUsage > 0 ? `Стоимость: ${formatMoney(costForUsage)}` : 'Введите цену и объём упаковки'}
+        </div>
       </div>
     `;
   });
@@ -812,6 +986,12 @@ function renderModal() {
     <div class="steps">${stepsHtml}</div>
 
     ${d.note ? `<div class="note">💡 ${d.note}</div>` : ''}
+
+    <div class="section-title">Расчёт себестоимости</div>
+    <div class="hint">Укажите цену упаковки и её объём — программа посчитает стоимость расхода на вашу партию.</div>
+    <div class="cost-block">${costHtml}</div>
+
+    <div class="totals" id="totalsBlock"></div>
   `;
 
   // Обработчик изменения объёма
@@ -821,14 +1001,116 @@ function renderModal() {
     if (isNaN(val) || val <= 0) return;
     currentVolume = val;
     renderModal();
-    // Восстановить фокус
     const newInput = document.getElementById('volumeInput');
     newInput.focus();
     newInput.setSelectionRange(newInput.value.length, newInput.value.length);
   });
+
+  // Обновить итоги
+  updateTotals();
 }
 
-// --- Ключи для подстановки в шаги ---
+// --- Обработка ввода цены ---
+function onPriceInput(drinkId, ingName, field, value) {
+  setPrice(drinkId, ingName, field, value);
+  // Пересчитать только нужную строку и итоги
+  const d = drinks.find(x => x.id === drinkId);
+  const ing = d.ingredients.find(x => x.name === ingName);
+  const ratio = currentVolume / d.baseVolume;
+  const usage = ing.value * ratio;
+  const saved = getPrice(drinkId, ingName);
+  const price = parseFloat(saved.price) || 0;
+  const packSize = parseFloat(saved.packSize) || 0;
+
+  let costForUsage = 0;
+  if (price > 0 && packSize > 0) {
+    costForUsage = (price / packSize) * usage;
+  }
+
+  const resultId = `cost-result-${drinkId}-${ingName.replace(/\s/g, '_')}`;
+  const resultEl = document.getElementById(resultId);
+  if (resultEl) {
+    resultEl.textContent = costForUsage > 0
+      ? `Стоимость: ${formatMoney(costForUsage)}`
+      : 'Введите цену и объём упаковки';
+  }
+
+  updateTotals();
+}
+
+// --- Итоги ---
+function updateTotals() {
+  const d = currentDrink;
+  const v = currentVolume;
+  const ratio = v / d.baseVolume;
+
+  let totalCost = 0;
+  d.ingredients.forEach(ing => {
+    if (ing.isTopUp || ing.isCustom) return;
+    const usage = ing.value * ratio;
+    const saved = getPrice(d.id, ing.name);
+    const price = parseFloat(saved.price) || 0;
+    const packSize = parseFloat(saved.packSize) || 0;
+    if (price > 0 && packSize > 0) {
+      totalCost += (price / packSize) * usage;
+    }
+  });
+
+  const bottles = Math.floor(v / 0.3);
+  const costPerBottle = bottles > 0 ? totalCost / bottles : 0;
+
+  // Цена продажи
+  const savedSellPrice = localStorage.getItem('nebula_sell_price') || '';
+  const sellPrice = parseFloat(savedSellPrice) || 0;
+  const revenue = sellPrice * bottles;
+  const profit = revenue - totalCost;
+  const profitPerBottle = bottles > 0 ? profit / bottles : 0;
+
+  const totalsEl = document.getElementById('totalsBlock');
+  if (!totalsEl) return;
+
+  totalsEl.innerHTML = `
+    <div class="total-row">
+      <span class="label">Себестоимость партии (${formatNumber(v)} л)</span>
+      <span class="value">${formatMoney(totalCost)}</span>
+    </div>
+    <div class="total-row">
+      <span class="label">Бутылок 300 мл</span>
+      <span class="value">${bottles} шт</span>
+    </div>
+    <div class="total-row">
+      <span class="label">Себестоимость 1 бутылки</span>
+      <span class="value">${formatMoney(costPerBottle)}</span>
+    </div>
+
+    <div class="profit-input">
+      <label>Цена продажи 1 бутылки, ₽</label>
+      <input type="number" inputmode="decimal" min="0" step="1"
+        value="${savedSellPrice}"
+        oninput="onSellPriceInput(this.value)">
+    </div>
+
+    <div class="profit-result ${profit < 0 ? 'negative' : ''}">
+      ${profit > 0
+        ? `💰 Прибыль с партии: ${formatMoney(profit)}<br>Прибыль с бутылки: ${formatMoney(profitPerBottle)}`
+        : profit < 0
+          ? `⚠️ Убыток: ${formatMoney(Math.abs(profit))}`
+          : 'Введите цену продажи, чтобы увидеть прибыль'}
+    </div>
+  `;
+}
+
+function onSellPriceInput(value) {
+  localStorage.setItem('nebula_sell_price', value);
+  updateTotals();
+  const input = document.querySelector('.profit-input input');
+  if (input) {
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+  }
+}
+
+// --- Ключи для подстановки ---
 function getKeyForIngredient(name) {
   const map = {
     'Чёрный чай': 'tea',
@@ -857,6 +1139,7 @@ function getKeyForIngredient(name) {
 }
 
 // --- Старт ---
+loadPrices();
 renderHome();
 </script>
 
