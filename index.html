@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0f0f13">
 <title>NEBULA — Рецептуры и расчёт</title>
 <style>
   * {
@@ -12,32 +13,38 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  html { font-size: 16px; }
+  html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #0f0f13;
     color: #e8e8ec;
     min-height: 100vh;
-    padding-bottom: 40px;
-    -webkit-text-size-adjust: 100%;
+    min-height: 100dvh;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+    overflow-x: hidden;
   }
 
+  /* ===== HEADER ===== */
   header {
-    background: linear-gradient(135deg, #1a1a24 0%, #0f0f13 100%);
-    padding: 20px 16px;
+    background: linear-gradient(180deg, #1a1a24 0%, #0f0f13 100%);
+    padding: 18px 16px 14px;
     text-align: center;
     border-bottom: 1px solid #2a2a38;
     position: sticky;
     top: 0;
     z-index: 10;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   header h1 {
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: 2px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 3px;
     background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -45,30 +52,33 @@
   }
 
   header p {
-    font-size: 11px;
+    font-size: 10px;
     color: #6b6b7b;
-    margin-top: 4px;
-    letter-spacing: 1px;
+    margin-top: 3px;
+    letter-spacing: 1.5px;
   }
 
+  /* ===== ГЛАВНЫЙ ЭКРАН ===== */
   .container {
-    padding: 16px;
-    max-width: 600px;
+    padding: 16px 14px 40px;
+    max-width: 640px;
     margin: 0 auto;
   }
 
   .category-title {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     color: #6b6b7b;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin: 20px 0 10px 4px;
+    letter-spacing: 2px;
+    margin: 22px 0 10px 4px;
   }
+
+  .category-title:first-child { margin-top: 4px; }
 
   .grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
 
@@ -76,11 +86,11 @@
     background: #1a1a24;
     border: 1px solid #2a2a38;
     border-radius: 14px;
-    padding: 16px 12px;
+    padding: 16px 10px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: transform 0.15s, background 0.15s;
     text-align: center;
-    min-height: 90px;
+    min-height: 96px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -89,291 +99,388 @@
   }
 
   .card:active {
-    transform: scale(0.97);
+    transform: scale(0.96);
     background: #22222e;
   }
 
-  .card .emoji { font-size: 26px; }
-  .card .name { font-size: 13px; font-weight: 600; line-height: 1.3; }
-  .card .sub { font-size: 10px; color: #6b6b7b; }
+  .card .emoji { font-size: 28px; line-height: 1; }
+  .card .name {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.25;
+    color: #e8e8ec;
+  }
+  .card .sub {
+    font-size: 10px;
+    color: #6b6b7b;
+    letter-spacing: 0.5px;
+  }
 
+  /* ===== МОДАЛЬНОЕ ОКНО ===== */
   .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.85);
+    background: #0f0f13;
     z-index: 100;
     overflow-y: auto;
-    padding: 16px;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 
   .modal-overlay.active { display: block; }
 
   .modal {
-    background: #1a1a24;
-    border: 1px solid #2a2a38;
-    border-radius: 18px;
-    max-width: 600px;
+    max-width: 640px;
     margin: 0 auto;
-    padding: 20px 16px;
-    animation: slideUp 0.25s ease;
+    padding: 16px 14px 60px;
+    animation: fadeIn 0.2s ease;
   }
 
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
   .modal-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-    gap: 10px;
+    align-items: center;
+    margin-bottom: 18px;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    background: #0f0f13;
+    padding: 8px 0 12px;
+    z-index: 5;
+    border-bottom: 1px solid #1a1a24;
   }
 
   .modal-header h2 {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
     line-height: 1.3;
     flex: 1;
+    padding-right: 6px;
   }
 
   .close-btn {
     background: #2a2a38;
     border: none;
     color: #e8e8ec;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     font-size: 20px;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: background 0.15s;
   }
 
+  .close-btn:active { background: #3a3a48; }
+
+  /* ===== ВВОД ОБЪЁМА ===== */
   .volume-box {
-    background: #0f0f13;
+    background: linear-gradient(135deg, #1a1a24, #16161e);
     border: 1px solid #2a2a38;
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 18px;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
   }
 
   .volume-box > label {
     display: block;
-    font-size: 12px;
+    font-size: 11px;
     color: #6b6b7b;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    margin-bottom: 12px;
   }
 
   .volume-controls {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 52px 1fr 52px;
     gap: 10px;
+    align-items: center;
   }
 
   .volume-controls button {
     background: #2a2a38;
     border: none;
     color: #e8e8ec;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    font-size: 22px;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    font-size: 24px;
     font-weight: 700;
     cursor: pointer;
-    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   .volume-controls button:active {
     background: #3a3a48;
-    transform: scale(0.95);
+    transform: scale(0.94);
   }
 
-  .volume-controls input {
-    flex: 1;
-    background: #1a1a24;
+  .volume-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .volume-input-wrap input {
+    width: 100%;
+    background: #0f0f13;
     border: 2px solid #3a3a48;
-    border-radius: 12px;
-    padding: 0 12px;
-    height: 48px;
+    border-radius: 14px;
+    padding: 0 46px 0 14px;
+    height: 52px;
     color: #e8e8ec;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     text-align: center;
     outline: none;
-    min-width: 0;
+    transition: border-color 0.15s;
+    -moz-appearance: textfield;
   }
 
-  .volume-controls input:focus { border-color: #a78bfa; }
+  .volume-input-wrap input::-webkit-outer-spin-button,
+  .volume-input-wrap input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 
-  .volume-controls .unit {
+  .volume-input-wrap input:focus {
+    border-color: #a78bfa;
+  }
+
+  .volume-input-wrap .unit {
+    position: absolute;
+    right: 16px;
     font-size: 14px;
     color: #6b6b7b;
     font-weight: 600;
-    flex-shrink: 0;
+    pointer-events: none;
   }
 
+  /* ===== СЕКЦИИ ===== */
   .section-title {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     color: #6b6b7b;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin: 20px 0 10px 0;
+    letter-spacing: 1.8px;
+    margin: 24px 0 12px 2px;
   }
 
-  .ingredients { display: flex; flex-direction: column; gap: 6px; }
+  /* ===== ИНГРЕДИЕНТЫ ===== */
+  .ingredients {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: #14141c;
+    border-radius: 14px;
+    padding: 6px;
+  }
 
   .ingredient {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #0f0f13;
-    border-radius: 10px;
     padding: 12px 14px;
     font-size: 14px;
-    gap: 10px;
+    gap: 12px;
+    border-radius: 10px;
   }
 
-  .ingredient .ing-name { color: #c0c0d0; flex: 1; }
-  .ingredient .ing-value { font-weight: 700; color: #a78bfa; white-space: nowrap; }
+  .ingredient:nth-child(odd) { background: #1a1a24; }
 
-  .steps { display: flex; flex-direction: column; gap: 10px; }
+  .ingredient .ing-name {
+    color: #c0c0d0;
+    flex: 1;
+    line-height: 1.3;
+  }
+
+  .ingredient .ing-value {
+    font-weight: 700;
+    color: #a78bfa;
+    white-space: nowrap;
+    font-size: 14px;
+  }
+
+  /* ===== ШАГИ ===== */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
   .step {
-    background: #0f0f13;
-    border-radius: 10px;
+    background: #14141c;
+    border-radius: 12px;
     padding: 14px;
     display: flex;
     gap: 12px;
+    align-items: flex-start;
   }
 
   .step-num {
     background: linear-gradient(135deg, #a78bfa, #60a5fa);
     color: #fff;
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 800;
     flex-shrink: 0;
+    margin-top: 1px;
   }
 
-  .step-text { font-size: 13px; line-height: 1.5; color: #c0c0d0; }
+  .step-text {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #c8c8d4;
+    flex: 1;
+  }
 
   .note {
-    background: rgba(167, 139, 250, 0.1);
+    background: rgba(167, 139, 250, 0.08);
     border-left: 3px solid #a78bfa;
-    border-radius: 8px;
-    padding: 12px 14px;
-    font-size: 12px;
-    line-height: 1.5;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.55;
     color: #b0b0c0;
     margin-top: 14px;
   }
 
-  .cost-block {
-    background: #0f0f13;
-    border-radius: 12px;
-    padding: 4px 14px;
-  }
-
-  .cost-row {
-    padding: 14px 0;
-    border-bottom: 1px solid #1f1f2a;
-  }
-
-  .cost-row:last-child { border-bottom: none; }
-
-  .cost-row .cost-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: #e8e8ec;
-    margin-bottom: 4px;
-  }
-
-  .cost-row .cost-usage {
-    font-size: 12px;
-    color: #6b6b7b;
+  /* ===== БЛОК РАСЧЁТА ===== */
+  .calc-card {
+    background: #14141c;
+    border: 1px solid #1f1f2a;
+    border-radius: 14px;
+    padding: 14px;
     margin-bottom: 10px;
   }
 
-  .cost-inputs {
+  .calc-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .calc-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #e8e8ec;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .calc-card-usage {
+    font-size: 11px;
+    color: #6b6b7b;
+    margin-top: 3px;
+    letter-spacing: 0.3px;
+  }
+
+  .calc-inputs {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
 
-  .input-field {
+  .input-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
   }
 
-  .input-field label {
-    font-size: 11px;
+  .input-group label {
+    font-size: 10px;
     color: #6b6b7b;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    padding-left: 2px;
   }
 
-  .input-field input {
-    background: #1a1a24;
-    border: 2px solid #3a3a48;
-    border-radius: 10px;
+  .input-group input {
+    width: 100%;
+    background: #0f0f13;
+    border: 2px solid #2a2a38;
+    border-radius: 12px;
     padding: 0 12px;
-    height: 48px;
+    height: 52px;
     color: #e8e8ec;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     outline: none;
-    width: 100%;
-    min-width: 0;
-  }
-
-  .input-field input:focus { border-color: #34d399; }
-
-  .input-field input[readonly] {
-    background: #14141c;
-    color: #6b6b7b;
-    border-color: #2a2a38;
-  }
-
-  .cost-result {
-    font-size: 13px;
-    color: #34d399;
-    font-weight: 600;
-    margin-top: 8px;
-    padding: 8px 10px;
-    background: rgba(52, 211, 153, 0.08);
-    border-radius: 8px;
+    transition: border-color 0.15s;
     text-align: center;
+    -moz-appearance: textfield;
   }
 
-  .pack-block {
-    background: #0f0f13;
-    border-radius: 12px;
-    padding: 4px 14px;
+  .input-group input::-webkit-outer-spin-button,
+  .input-group input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 
+  .input-group input:focus {
+    border-color: #34d399;
+  }
+
+  .input-group input::placeholder {
+    color: #3a3a48;
+    font-weight: 500;
+  }
+
+  .input-group input[readonly] {
+    background: #0a0a10;
+    color: #6b6b7b;
+    border-color: #1f1f2a;
+  }
+
+  .calc-result {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: rgba(52, 211, 153, 0.08);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #34d399;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+
+  .calc-result.empty {
+    background: rgba(107, 107, 123, 0.08);
+    color: #6b6b7b;
+    font-weight: 500;
+  }
+
+  /* ===== ИТОГИ ===== */
   .totals {
-    background: linear-gradient(135deg, #1a1a24 0%, #0f0f13 100%);
+    background: linear-gradient(160deg, #1a1a24 0%, #0f0f13 100%);
     border: 1px solid #2a2a38;
-    border-radius: 14px;
-    padding: 16px;
+    border-radius: 16px;
+    padding: 18px 16px;
     margin-top: 16px;
   }
 
@@ -381,63 +488,99 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    padding: 10px 0;
     font-size: 14px;
-    gap: 10px;
+    gap: 12px;
+    border-bottom: 1px solid #1a1a24;
   }
 
-  .total-row .label { color: #a0a0b0; flex: 1; }
-  .total-row .value { font-weight: 700; color: #e8e8ec; white-space: nowrap; }
+  .total-row:last-of-type { border-bottom: none; }
+
+  .total-row .label {
+    color: #a0a0b0;
+    flex: 1;
+    line-height: 1.3;
+  }
+
+  .total-row .value {
+    font-weight: 700;
+    color: #e8e8ec;
+    white-space: nowrap;
+  }
 
   .total-row.big {
-    border-top: 1px solid #2a2a38;
-    margin-top: 10px;
     padding-top: 14px;
-    font-size: 16px;
+    margin-top: 6px;
+    border-top: 1px solid #2a2a38;
+    border-bottom: none;
+    font-size: 15px;
   }
 
-  .total-row.big .value { color: #34d399; font-size: 18px; }
+  .total-row.big .value {
+    color: #34d399;
+    font-size: 18px;
+  }
 
-  .profit-input {
-    margin-top: 14px;
-    padding-top: 14px;
+  .sell-block {
+    margin-top: 18px;
+    padding-top: 18px;
     border-top: 1px solid #2a2a38;
   }
 
-  .profit-input .input-field label {
-    font-size: 12px;
+  .sell-block .input-group label {
     color: #a0a0b0;
     text-transform: none;
+    font-size: 12px;
     letter-spacing: 0;
+    font-weight: 600;
   }
 
-  .profit-input .input-field input {
+  .sell-block .input-group input {
     border-color: #34d399;
   }
 
-  .profit-result {
-    margin-top: 12px;
-    padding: 14px;
+  .profit-box {
+    margin-top: 14px;
+    padding: 16px;
     background: rgba(52, 211, 153, 0.1);
-    border-radius: 10px;
-    font-size: 14px;
-    color: #34d399;
+    border-radius: 12px;
     text-align: center;
-    font-weight: 600;
-    line-height: 1.6;
+    line-height: 1.7;
+    font-size: 14px;
+    font-weight: 700;
+    color: #34d399;
   }
 
-  .profit-result.negative {
+  .profit-box .big-num {
+    font-size: 20px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .profit-box .sub {
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.85;
+  }
+
+  .profit-box.negative {
     background: rgba(248, 113, 113, 0.1);
     color: #f87171;
+  }
+
+  .profit-box.empty {
+    background: rgba(107, 107, 123, 0.08);
+    color: #6b6b7b;
+    font-weight: 500;
+    font-size: 13px;
   }
 
   .hint {
     font-size: 12px;
     color: #6b6b7b;
-    line-height: 1.5;
-    margin-bottom: 10px;
-    padding: 0 4px;
+    line-height: 1.55;
+    margin-bottom: 12px;
+    padding: 0 2px;
   }
 </style>
 </head>
@@ -1009,36 +1152,47 @@ const modalContent = document.getElementById('modalContent');
 let currentDrink = null;
 let currentVolume = 10;
 
-const priceStorage = {};
+// Хранилище цен ингредиентов: { drinkId: { ingName: { price, packSize } } }
+let priceStorage = {};
 
-const packStorage = {
+// Хранилище упаковки и цены продажи (общее для всех)
+let packStorage = {
   bottle: { price: '' },
   cap: { price: '' },
   label: { price: '' },
   sellPrice: ''
 };
 
+// ---------- Загрузка/сохранение ----------
 function loadStorage() {
   try {
-    const saved = localStorage.getItem('nebula_prices');
-    if (saved) Object.assign(priceStorage, JSON.parse(saved));
+    const saved = localStorage.getItem('nebula_prices_v2');
+    if (saved) priceStorage = JSON.parse(saved) || {};
+  } catch (e) { priceStorage = {}; }
 
-    const savedPack = localStorage.getItem('nebula_pack');
-    if (savedPack) Object.assign(packStorage, JSON.parse(savedPack));
-
-    const savedSell = localStorage.getItem('nebula_sell_price');
-    if (savedSell) packStorage.sellPrice = savedSell;
-  } catch (e) { console.warn('Ошибка загрузки', e); }
+  try {
+    const savedPack = localStorage.getItem('nebula_pack_v2');
+    if (savedPack) {
+      const parsed = JSON.parse(savedPack);
+      packStorage = {
+        bottle: { price: parsed.bottle?.price || '' },
+        cap: { price: parsed.cap?.price || '' },
+        label: { price: parsed.label?.price || '' },
+        sellPrice: parsed.sellPrice || ''
+      };
+    }
+  } catch (e) { /* оставляем по умолчанию */ }
 }
 
 function savePrices() {
-  try { localStorage.setItem('nebula_prices', JSON.stringify(priceStorage)); } catch (e) {}
+  try { localStorage.setItem('nebula_prices_v2', JSON.stringify(priceStorage)); } catch (e) {}
 }
 
 function savePack() {
-  try { localStorage.setItem('nebula_pack', JSON.stringify(packStorage)); } catch (e) {}
+  try { localStorage.setItem('nebula_pack_v2', JSON.stringify(packStorage)); } catch (e) {}
 }
 
+// ---------- Работа с ценами ингредиентов ----------
 function getPrice(drinkId, ingName) {
   if (!priceStorage[drinkId]) priceStorage[drinkId] = {};
   if (!priceStorage[drinkId][ingName]) {
@@ -1047,7 +1201,7 @@ function getPrice(drinkId, ingName) {
   return priceStorage[drinkId][ingName];
 }
 
-function setPrice(drinkId, ingName, field, value) {
+function setPriceField(drinkId, ingName, field, value) {
   if (!priceStorage[drinkId]) priceStorage[drinkId] = {};
   if (!priceStorage[drinkId][ingName]) {
     priceStorage[drinkId][ingName] = { price: '', packSize: '' };
@@ -1056,11 +1210,34 @@ function setPrice(drinkId, ingName, field, value) {
   savePrices();
 }
 
-function setPack(field, value) {
-  packStorage[field] = value;
+function setPackField(field, value) {
+  if (!packStorage[field]) packStorage[field] = { price: '' };
+  packStorage[field].price = value;
   savePack();
 }
 
+// ---------- Вспомогательные ----------
+function toNumber(v) {
+  if (v === '' || v === null || v === undefined) return 0;
+  const n = parseFloat(String(v).replace(',', '.'));
+  return isFinite(n) && n > 0 ? n : 0;
+}
+
+function formatNumber(num) {
+  if (!isFinite(num) || num === 0) return '0';
+  if (num >= 1000) return Math.round(num).toString();
+  if (num >= 100) return num.toFixed(1).replace(/\.0$/, '');
+  if (num >= 10) return num.toFixed(1).replace(/\.0$/, '');
+  if (num >= 1) return num.toFixed(2).replace(/\.?0+$/, '');
+  return num.toFixed(3).replace(/\.?0+$/, '');
+}
+
+function formatMoney(num) {
+  if (!isFinite(num) || num <= 0) return '0 ₽';
+  return num.toFixed(2).replace('.', ',') + ' ₽';
+}
+
+// ---------- Главный экран ----------
 function renderHome() {
   const categories = {};
   drinks.forEach(d => {
@@ -1086,12 +1263,14 @@ function renderHome() {
   app.innerHTML = html;
 }
 
+// ---------- Открытие/закрытие ----------
 function openDrink(id) {
   currentDrink = drinks.find(d => d.id === id);
   currentVolume = currentDrink.baseVolume;
   renderModal();
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
+  overlay.scrollTop = 0;
 }
 
 function closeModal() {
@@ -1103,24 +1282,31 @@ overlay.addEventListener('click', (e) => {
   if (e.target === overlay) closeModal();
 });
 
-function formatNumber(num) {
-  if (num === 0) return '0';
-  if (num >= 100) return Math.round(num).toString();
-  if (num >= 10) return num.toFixed(1).replace(/\.0$/, '');
-  if (num >= 1) return num.toFixed(2).replace(/\.?0+$/, '');
-  return num.toFixed(3).replace(/\.?0+$/, '');
+// ---------- Расчёт себестоимости партии ----------
+function calcIngredientCost(drinkId, ing, ratio) {
+  if (ing.isTopUp || ing.isCustom) return 0;
+  const saved = getPrice(drinkId, ing.name);
+  const price = toNumber(saved.price);
+  const packSize = toNumber(saved.packSize);
+  if (price <= 0 || packSize <= 0) return 0;
+  const usage = ing.value * ratio;
+  return (price / packSize) * usage;
 }
 
-function formatMoney(num) {
-  if (!isFinite(num) || num <= 0) return '—';
-  return num.toFixed(2) + ' ₽';
+function calcPackCost(bottles) {
+  const bottle = toNumber(packStorage.bottle.price) * bottles;
+  const cap = toNumber(packStorage.cap.price) * bottles;
+  const label = toNumber(packStorage.label.price) * bottles;
+  return { bottle, cap, label, total: bottle + cap + label };
 }
 
+// ---------- Рендер модального окна ----------
 function renderModal() {
   const d = currentDrink;
   const v = currentVolume;
   const ratio = v / d.baseVolume;
 
+  // Ингредиенты
   let ingHtml = '';
   d.ingredients.forEach(ing => {
     let displayValue;
@@ -1135,6 +1321,7 @@ function renderModal() {
     `;
   });
 
+  // Шаги
   let stepsHtml = '';
   d.steps.forEach((step, i) => {
     let text = step;
@@ -1157,103 +1344,120 @@ function renderModal() {
     `;
   });
 
+  // Блок себестоимости ингредиентов
   let costHtml = '';
   d.ingredients.forEach(ing => {
     if (ing.isTopUp || ing.isCustom) return;
     const usage = ing.value * ratio;
     const saved = getPrice(d.id, ing.name);
-    const price = parseFloat(saved.price) || 0;
-    const packSize = parseFloat(saved.packSize) || 0;
-    let costForUsage = 0;
-    if (price > 0 && packSize > 0) costForUsage = (price / packSize) * usage;
+    const price = toNumber(saved.price);
+    const packSize = toNumber(saved.packSize);
+    const costForUsage = (price > 0 && packSize > 0) ? (price / packSize) * usage : 0;
+    const isEmpty = costForUsage <= 0;
 
     costHtml += `
-      <div class="cost-row">
-        <div class="cost-name">${ing.name}</div>
-        <div class="cost-usage">Расход: ${formatNumber(usage)} ${ing.unit}</div>
-        <div class="cost-inputs">
-          <div class="input-field">
+      <div class="calc-card">
+        <div class="calc-card-head">
+          <div>
+            <div class="calc-card-title">${ing.name}</div>
+            <div class="calc-card-usage">Расход на партию: ${formatNumber(usage)} ${ing.unit}</div>
+          </div>
+        </div>
+        <div class="calc-inputs">
+          <div class="input-group">
             <label>Цена упак., ₽</label>
             <input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"
               value="${saved.price}"
               oninput="onPriceInput('${d.id}', '${ing.name.replace(/'/g, "\\'")}', 'price', this.value)">
           </div>
-          <div class="input-field">
+          <div class="input-group">
             <label>Объём упак., ${ing.unit}</label>
             <input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"
               value="${saved.packSize}"
               oninput="onPriceInput('${d.id}', '${ing.name.replace(/'/g, "\\'")}', 'packSize', this.value)">
           </div>
         </div>
-        <div class="cost-result" id="cost-result-${d.id}-${ing.name.replace(/\s/g, '_')}">
-          ${costForUsage > 0 ? `Стоимость: ${formatMoney(costForUsage)}` : 'Введите цену и объём упаковки'}
+        <div class="calc-result ${isEmpty ? 'empty' : ''}">
+          ${isEmpty ? 'Введите цену и объём упаковки' : 'Стоимость: ' + formatMoney(costForUsage)}
         </div>
       </div>
     `;
   });
 
+  // Блок упаковки
   const bottles = Math.floor(v / 0.3);
+  const packCost = calcPackCost(bottles);
+
   const packHtml = `
-    <div class="cost-row">
-      <div class="cost-name">Бутылка 300 мл</div>
-      <div class="cost-usage">Количество: ${bottles} шт</div>
-      <div class="cost-inputs">
-        <div class="input-field">
+    <div class="calc-card">
+      <div class="calc-card-head">
+        <div>
+          <div class="calc-card-title">Бутылка 300 мл</div>
+          <div class="calc-card-usage">Количество: ${bottles} шт</div>
+        </div>
+      </div>
+      <div class="calc-inputs">
+        <div class="input-group">
           <label>Цена за шт, ₽</label>
           <input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"
             value="${packStorage.bottle.price}"
             oninput="onPackInput('bottle', this.value)">
         </div>
-        <div class="input-field">
+        <div class="input-group">
           <label>Кол-во, шт</label>
-          <input type="number" inputmode="numeric" min="0" step="1"
-            value="${bottles}" readonly>
+          <input type="number" value="${bottles}" readonly>
         </div>
       </div>
-      <div class="cost-result" id="pack-result-bottle">
-        ${getPackResult('bottle', bottles)}
+      <div class="calc-result ${packCost.bottle <= 0 ? 'empty' : ''}">
+        ${packCost.bottle <= 0 ? 'Введите цену за штуку' : 'Стоимость: ' + formatMoney(packCost.bottle)}
       </div>
     </div>
 
-    <div class="cost-row">
-      <div class="cost-name">Крышка</div>
-      <div class="cost-usage">Количество: ${bottles} шт</div>
-      <div class="cost-inputs">
-        <div class="input-field">
+    <div class="calc-card">
+      <div class="calc-card-head">
+        <div>
+          <div class="calc-card-title">Крышка</div>
+          <div class="calc-card-usage">Количество: ${bottles} шт</div>
+        </div>
+      </div>
+      <div class="calc-inputs">
+        <div class="input-group">
           <label>Цена за шт, ₽</label>
           <input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"
             value="${packStorage.cap.price}"
             oninput="onPackInput('cap', this.value)">
         </div>
-        <div class="input-field">
+        <div class="input-group">
           <label>Кол-во, шт</label>
-          <input type="number" inputmode="numeric" min="0" step="1"
-            value="${bottles}" readonly>
+          <input type="number" value="${bottles}" readonly>
         </div>
       </div>
-      <div class="cost-result" id="pack-result-cap">
-        ${getPackResult('cap', bottles)}
+      <div class="calc-result ${packCost.cap <= 0 ? 'empty' : ''}">
+        ${packCost.cap <= 0 ? 'Введите цену за штуку' : 'Стоимость: ' + formatMoney(packCost.cap)}
       </div>
     </div>
 
-    <div class="cost-row">
-      <div class="cost-name">Этикетка</div>
-      <div class="cost-usage">Количество: ${bottles} шт</div>
-      <div class="cost-inputs">
-        <div class="input-field">
+    <div class="calc-card">
+      <div class="calc-card-head">
+        <div>
+          <div class="calc-card-title">Этикетка</div>
+          <div class="calc-card-usage">Количество: ${bottles} шт</div>
+        </div>
+      </div>
+      <div class="calc-inputs">
+        <div class="input-group">
           <label>Цена за шт, ₽</label>
           <input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"
             value="${packStorage.label.price}"
             oninput="onPackInput('label', this.value)">
         </div>
-        <div class="input-field">
+        <div class="input-group">
           <label>Кол-во, шт</label>
-          <input type="number" inputmode="numeric" min="0" step="1"
-            value="${bottles}" readonly>
+          <input type="number" value="${bottles}" readonly>
         </div>
       </div>
-      <div class="cost-result" id="pack-result-label">
-        ${getPackResult('label', bottles)}
+      <div class="calc-result ${packCost.label <= 0 ? 'empty' : ''}">
+        ${packCost.label <= 0 ? 'Введите цену за штуку' : 'Стоимость: ' + formatMoney(packCost.label)}
       </div>
     </div>
   `;
@@ -1268,8 +1472,10 @@ function renderModal() {
       <label>Хочу получить</label>
       <div class="volume-controls">
         <button onclick="changeVolume(-1)">−</button>
-        <input type="number" id="volumeInput" value="${v}" min="0.5" step="0.5" inputmode="decimal">
-        <span class="unit">л</span>
+        <div class="volume-input-wrap">
+          <input type="number" id="volumeInput" value="${v}" min="0.5" step="0.5" inputmode="decimal">
+          <span class="unit">л</span>
+        </div>
         <button onclick="changeVolume(1)">+</button>
       </div>
     </div>
@@ -1283,108 +1489,107 @@ function renderModal() {
     ${d.note ? `<div class="note">💡 ${d.note}</div>` : ''}
 
     <div class="section-title">Себестоимость ингредиентов</div>
-    <div class="hint">Введите цену упаковки и её объём — программа посчитает стоимость расхода на партию.</div>
-    <div class="cost-block">${costHtml}</div>
+    <div class="hint">Укажите цену упаковки и её объём — программа посчитает стоимость расхода на партию.</div>
+    <div>${costHtml}</div>
 
     <div class="section-title">Упаковка</div>
-    <div class="hint">Количество бутылок, крышек и этикеток считается автоматически: ${formatNumber(v)} л ÷ 0,3 л = ${bottles} шт.</div>
-    <div class="pack-block">${packHtml}</div>
+    <div class="hint">Количество бутылок считается автоматически: ${formatNumber(v)} л ÷ 0,3 л = ${bottles} шт.</div>
+    <div>${packHtml}</div>
 
     <div class="totals" id="totalsBlock"></div>
   `;
 
+  // Обработчик ввода объёма
   const input = document.getElementById('volumeInput');
-  input.addEventListener('input', (e) => {
-    let val = parseFloat(e.target.value);
-    if (isNaN(val) || val <= 0) return;
+  input.addEventListener('change', (e) => {
+    const val = toNumber(e.target.value);
+    if (val < 0.5) {
+      currentVolume = 0.5;
+      renderModal();
+      return;
+    }
     currentVolume = val;
     renderModal();
-    const newInput = document.getElementById('volumeInput');
-    newInput.focus();
-    newInput.setSelectionRange(newInput.value.length, newInput.value.length);
+  });
+
+  input.addEventListener('blur', (e) => {
+    const val = toNumber(e.target.value);
+    if (val < 0.5) {
+      currentVolume = 0.5;
+      renderModal();
+    }
   });
 
   updateTotals();
 }
 
+// ---------- Изменение объёма кнопками ----------
 function changeVolume(delta) {
   let v = currentVolume + delta;
   if (v < 0.5) v = 0.5;
+  if (v > 1000) v = 1000;
   currentVolume = v;
   renderModal();
 }
 
+// ---------- Обработка ввода цены ингредиента ----------
 function onPriceInput(drinkId, ingName, field, value) {
-  setPrice(drinkId, ingName, field, value);
+  setPriceField(drinkId, ingName, field, value);
   const d = drinks.find(x => x.id === drinkId);
   const ing = d.ingredients.find(x => x.name === ingName);
   const ratio = currentVolume / d.baseVolume;
-  const usage = ing.value * ratio;
-  const saved = getPrice(drinkId, ingName);
-  const price = parseFloat(saved.price) || 0;
-  const packSize = parseFloat(saved.packSize) || 0;
-  let costForUsage = 0;
-  if (price > 0 && packSize > 0) costForUsage = (price / packSize) * usage;
-
-  const resultId = `cost-result-${drinkId}-${ingName.replace(/\s/g, '_')}`;
-  const resultEl = document.getElementById(resultId);
-  if (resultEl) {
-    resultEl.textContent = costForUsage > 0
-      ? `Стоимость: ${formatMoney(costForUsage)}`
-      : 'Введите цену и объём упаковки';
+  const cost = calcIngredientCost(drinkId, ing, ratio);
+  const card = document.querySelector(`[data-cost-for="${drinkId}-${ingName}"]`);
+  if (card) {
+    card.textContent = cost > 0 ? 'Стоимость: ' + formatMoney(cost) : 'Введите цену и объём упаковки';
+    card.classList.toggle('empty', cost <= 0);
   }
   updateTotals();
 }
 
+// ---------- Обработка ввода цены упаковки ----------
 function onPackInput(field, value) {
-  setPack(field, value);
-  const v = currentVolume;
-  const bottles = Math.floor(v / 0.3);
-
-  const resultEl = document.getElementById(`pack-result-${field}`);
-  if (resultEl) resultEl.textContent = getPackResult(field, bottles);
-
+  setPackField(field, value);
+  const bottles = Math.floor(currentVolume / 0.3);
+  const cost = toNumber(value) * bottles;
+  const el = document.querySelector(`[data-pack-result="${field}"]`);
+  if (el) {
+    el.textContent = cost > 0 ? 'Стоимость: ' + formatMoney(cost) : 'Введите цену за штуку';
+    el.classList.toggle('empty', cost <= 0);
+  }
   updateTotals();
 }
 
-function getPackResult(field, bottles) {
-  const price = parseFloat(packStorage[field].price) || 0;
-  if (price <= 0) return 'Введите цену за штуку';
-  const total = price * bottles;
-  return `Стоимость: ${formatMoney(total)}`;
-}
-
+// ---------- Итоги ----------
 function updateTotals() {
   const d = currentDrink;
   const v = currentVolume;
   const ratio = v / d.baseVolume;
   const bottles = Math.floor(v / 0.3);
 
+  // Себестоимость ингредиентов
   let ingCost = 0;
   d.ingredients.forEach(ing => {
-    if (ing.isTopUp || ing.isCustom) return;
-    const usage = ing.value * ratio;
-    const saved = getPrice(d.id, ing.name);
-    const price = parseFloat(saved.price) || 0;
-    const packSize = parseFloat(saved.packSize) || 0;
-    if (price > 0 && packSize > 0) ingCost += (price / packSize) * usage;
+    ingCost += calcIngredientCost(d.id, ing, ratio);
   });
 
-  const bottlePrice = parseFloat(packStorage.bottle.price) || 0;
-  const capPrice = parseFloat(packStorage.cap.price) || 0;
-  const labelPrice = parseFloat(packStorage.label.price) || 0;
-  const packCost = (bottlePrice + capPrice + labelPrice) * bottles;
+  // Упаковка
+  const packCost = calcPackCost(bottles);
 
-  const totalCost = ingCost + packCost;
+  const totalCost = ingCost + packCost.total;
   const costPerBottle = bottles > 0 ? totalCost / bottles : 0;
 
-  const sellPrice = parseFloat(packStorage.sellPrice) || 0;
+  // Продажа
+  const sellPrice = toNumber(packStorage.sellPrice);
   const revenue = sellPrice * bottles;
   const profit = revenue - totalCost;
   const profitPerBottle = bottles > 0 ? profit / bottles : 0;
 
   const totalsEl = document.getElementById('totalsBlock');
   if (!totalsEl) return;
+
+  const hasCost = totalCost > 0;
+  const hasSell = sellPrice > 0;
 
   totalsEl.innerHTML = `
     <div class="total-row">
@@ -1393,7 +1598,7 @@ function updateTotals() {
     </div>
     <div class="total-row">
       <span class="label">Упаковка (${bottles} шт)</span>
-      <span class="value">${formatMoney(packCost)}</span>
+      <span class="value">${formatMoney(packCost.total)}</span>
     </div>
     <div class="total-row big">
       <span class="label">Себестоимость партии</span>
@@ -1404,22 +1609,29 @@ function updateTotals() {
       <span class="value">${formatMoney(costPerBottle)}</span>
     </div>
 
-    <div class="profit-input">
-      <div class="input-field">
+    <div class="sell-block">
+      <div class="input-group">
         <label>Цена продажи 1 бутылки, ₽</label>
         <input type="number" inputmode="decimal" min="0" step="1" placeholder="0"
-          value="${packStorage.sellPrice || ''}"
+          value="${packStorage.sellPrice}"
           oninput="onSellPriceInput(this.value)">
       </div>
     </div>
 
-    <div class="profit-result ${profit < 0 ? 'negative' : ''}">
-      ${profit > 0
-        ? `💰 Прибыль с партии: ${formatMoney(profit)}<br>Прибыль с бутылки: ${formatMoney(profitPerBottle)}`
-        : profit < 0
-          ? `⚠️ Убыток: ${formatMoney(Math.abs(profit))}`
-          : 'Введите цену продажи, чтобы увидеть прибыль'}
-    </div>
+    ${!hasCost
+      ? `<div class="profit-box empty">Введите цены ингредиентов и упаковки, чтобы увидеть прибыль</div>`
+      : !hasSell
+        ? `<div class="profit-box empty">Введите цену продажи, чтобы увидеть прибыль</div>`
+        : profit >= 0
+          ? `<div class="profit-box">
+               <span class="big-num">+${formatMoney(profit)}</span>
+               <span class="sub">Прибыль с партии · ${formatMoney(profitPerBottle)} с бутылки</span>
+             </div>`
+          : `<div class="profit-box negative">
+               <span class="big-num">−${formatMoney(Math.abs(profit))}</span>
+               <span class="sub">Убыток с партии · ${formatMoney(Math.abs(profitPerBottle))} с бутылки</span>
+             </div>`
+    }
   `;
 }
 
@@ -1427,13 +1639,15 @@ function onSellPriceInput(value) {
   packStorage.sellPrice = value;
   savePack();
   updateTotals();
-  const input = document.querySelector('.profit-input input');
+  const input = document.querySelector('.sell-block input');
   if (input) {
+    const pos = input.value.length;
     input.focus();
-    input.setSelectionRange(input.value.length, input.value.length);
+    try { input.setSelectionRange(pos, pos); } catch (e) {}
   }
 }
 
+// ---------- Ключи для подстановки ----------
 function getKeyForIngredient(name) {
   const map = {
     'Чёрный чай': 'tea',
@@ -1469,6 +1683,9 @@ function getKeyForIngredient(name) {
   return map[name] || null;
 }
 
+// ============================================================
+// СТАРТ
+// ============================================================
 loadStorage();
 renderHome();
 </script>
