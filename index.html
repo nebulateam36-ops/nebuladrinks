@@ -12,12 +12,15 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  html { font-size: 16px; }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #0f0f13;
     color: #e8e8ec;
     min-height: 100vh;
     padding-bottom: 40px;
+    -webkit-text-size-adjust: 100%;
   }
 
   header {
@@ -94,7 +97,6 @@
   .card .name { font-size: 13px; font-weight: 600; line-height: 1.3; }
   .card .sub { font-size: 10px; color: #6b6b7b; }
 
-  /* Модальное окно */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -114,7 +116,7 @@
     border-radius: 18px;
     max-width: 600px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 20px 16px;
     animation: slideUp 0.25s ease;
   }
 
@@ -128,6 +130,7 @@
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 16px;
+    gap: 10px;
   }
 
   .modal-header h2 {
@@ -141,51 +144,84 @@
     background: #2a2a38;
     border: none;
     color: #e8e8ec;
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    margin-left: 10px;
   }
 
-  .volume-input {
+  .volume-box {
     background: #0f0f13;
     border: 1px solid #2a2a38;
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 14px;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
+  }
+
+  .volume-box > label {
+    display: block;
+    font-size: 12px;
+    color: #6b6b7b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .volume-controls {
     display: flex;
     align-items: center;
     gap: 10px;
   }
 
-  .volume-input label {
-    font-size: 13px;
-    color: #a0a0b0;
-    flex: 1;
+  .volume-controls button {
+    background: #2a2a38;
+    border: none;
+    color: #e8e8ec;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .volume-input input {
+  .volume-controls button:active {
+    background: #3a3a48;
+    transform: scale(0.95);
+  }
+
+  .volume-controls input {
+    flex: 1;
     background: #1a1a24;
-    border: 1px solid #3a3a48;
-    border-radius: 8px;
-    padding: 10px 12px;
+    border: 2px solid #3a3a48;
+    border-radius: 12px;
+    padding: 0 12px;
+    height: 48px;
     color: #e8e8ec;
-    font-size: 16px;
-    font-weight: 600;
-    width: 90px;
+    font-size: 18px;
+    font-weight: 700;
     text-align: center;
     outline: none;
+    min-width: 0;
   }
 
-  .volume-input input:focus { border-color: #a78bfa; }
+  .volume-controls input:focus { border-color: #a78bfa; }
 
-  .volume-input .unit { font-size: 13px; color: #6b6b7b; }
+  .volume-controls .unit {
+    font-size: 14px;
+    color: #6b6b7b;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
 
   .section-title {
     font-size: 12px;
@@ -193,7 +229,7 @@
     color: #6b6b7b;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    margin: 18px 0 10px 0;
+    margin: 20px 0 10px 0;
   }
 
   .ingredients { display: flex; flex-direction: column; gap: 6px; }
@@ -206,10 +242,11 @@
     border-radius: 10px;
     padding: 12px 14px;
     font-size: 14px;
+    gap: 10px;
   }
 
   .ingredient .ing-name { color: #c0c0d0; flex: 1; }
-  .ingredient .ing-value { font-weight: 700; color: #a78bfa; white-space: nowrap; margin-left: 10px; }
+  .ingredient .ing-value { font-weight: 700; color: #a78bfa; white-space: nowrap; }
 
   .steps { display: flex; flex-direction: column; gap: 10px; }
 
@@ -248,79 +285,96 @@
     margin-top: 14px;
   }
 
-  /* ===== БЛОК СЕБЕСТОИМОСТИ ===== */
   .cost-block {
     background: #0f0f13;
     border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 10px;
+    padding: 4px 14px;
   }
 
   .cost-row {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px 0;
-    border-bottom: 1px solid #1a1a24;
+    padding: 14px 0;
+    border-bottom: 1px solid #1f1f2a;
   }
 
   .cost-row:last-child { border-bottom: none; }
 
   .cost-row .cost-name {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     color: #e8e8ec;
+    margin-bottom: 4px;
   }
 
   .cost-row .cost-usage {
-    font-size: 11px;
+    font-size: 12px;
     color: #6b6b7b;
+    margin-bottom: 10px;
   }
 
   .cost-inputs {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 10px;
   }
 
-  .cost-inputs label {
+  .input-field {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    font-size: 10px;
+    gap: 6px;
+  }
+
+  .input-field label {
+    font-size: 11px;
     color: #6b6b7b;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
-  .cost-inputs input {
+  .input-field input {
     background: #1a1a24;
-    border: 1px solid #3a3a48;
-    border-radius: 8px;
-    padding: 8px 10px;
+    border: 2px solid #3a3a48;
+    border-radius: 10px;
+    padding: 0 12px;
+    height: 48px;
     color: #e8e8ec;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     outline: none;
     width: 100%;
+    min-width: 0;
   }
 
-  .cost-inputs input:focus { border-color: #34d399; }
+  .input-field input:focus { border-color: #34d399; }
+
+  .input-field input[readonly] {
+    background: #14141c;
+    color: #6b6b7b;
+    border-color: #2a2a38;
+  }
 
   .cost-result {
-    font-size: 12px;
+    font-size: 13px;
     color: #34d399;
     font-weight: 600;
-    margin-top: 4px;
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: rgba(52, 211, 153, 0.08);
+    border-radius: 8px;
+    text-align: center;
   }
 
-  /* Итоги */
+  .pack-block {
+    background: #0f0f13;
+    border-radius: 12px;
+    padding: 4px 14px;
+  }
+
   .totals {
     background: linear-gradient(135deg, #1a1a24 0%, #0f0f13 100%);
     border: 1px solid #2a2a38;
     border-radius: 14px;
     padding: 16px;
-    margin-top: 14px;
+    margin-top: 16px;
   }
 
   .total-row {
@@ -329,14 +383,15 @@
     align-items: center;
     padding: 8px 0;
     font-size: 14px;
+    gap: 10px;
   }
 
-  .total-row .label { color: #a0a0b0; }
-  .total-row .value { font-weight: 700; color: #e8e8ec; }
+  .total-row .label { color: #a0a0b0; flex: 1; }
+  .total-row .value { font-weight: 700; color: #e8e8ec; white-space: nowrap; }
 
   .total-row.big {
     border-top: 1px solid #2a2a38;
-    margin-top: 8px;
+    margin-top: 10px;
     padding-top: 14px;
     font-size: 16px;
   }
@@ -344,44 +399,32 @@
   .total-row.big .value { color: #34d399; font-size: 18px; }
 
   .profit-input {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-    padding-top: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
     border-top: 1px solid #2a2a38;
   }
 
-  .profit-input label {
+  .profit-input .input-field label {
     font-size: 12px;
     color: #a0a0b0;
-    flex: 1;
+    text-transform: none;
+    letter-spacing: 0;
   }
 
-  .profit-input input {
-    background: #1a1a24;
-    border: 1px solid #3a3a48;
-    border-radius: 8px;
-    padding: 8px 10px;
-    color: #e8e8ec;
-    font-size: 14px;
-    font-weight: 600;
-    width: 100px;
-    text-align: center;
-    outline: none;
+  .profit-input .input-field input {
+    border-color: #34d399;
   }
-
-  .profit-input input:focus { border-color: #34d399; }
 
   .profit-result {
     margin-top: 12px;
-    padding: 12px;
+    padding: 14px;
     background: rgba(52, 211, 153, 0.1);
     border-radius: 10px;
-    font-size: 13px;
+    font-size: 14px;
     color: #34d399;
     text-align: center;
     font-weight: 600;
+    line-height: 1.6;
   }
 
   .profit-result.negative {
@@ -389,18 +432,11 @@
     color: #f87171;
   }
 
-  .empty {
-    text-align: center;
-    padding: 40px 20px;
-    color: #6b6b7b;
-    font-size: 14px;
-  }
-
   .hint {
-    font-size: 11px;
+    font-size: 12px;
     color: #6b6b7b;
     line-height: 1.5;
-    margin-top: 6px;
+    margin-bottom: 10px;
     padding: 0 4px;
   }
 </style>
@@ -424,6 +460,7 @@
 // ============================================================
 
 const drinks = [
+  // ---------- ХОЛОДНЫЕ ЧАИ ----------
   {
     id: 'peach',
     category: 'Холодные чаи',
@@ -594,6 +631,8 @@ const drinks = [
     ],
     note: 'Мятный экстракт добавляйте постепенно — он может перебить вкус.'
   },
+
+  // ---------- МАТЧА ----------
   {
     id: 'matcha',
     category: 'Матча',
@@ -618,6 +657,8 @@ const drinks = [
     ],
     note: 'Матча естественно может оседать — это нормально.'
   },
+
+  // ---------- ЛАТТЕ ----------
   {
     id: 'classic-latte',
     category: 'Латте',
@@ -766,6 +807,194 @@ const drinks = [
       'Закрыть, маркировать, убрать в холодильник.'
     ],
     note: 'Кокосовый напиток может расслаиваться — перед розливом тщательно перемешать.'
+  },
+
+  // ---------- МОРСЫ ----------
+  {
+    id: 'mors-blackcurrant',
+    category: 'Морсы',
+    name: 'Чёрная смородина',
+    emoji: '🫐',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Концентрат чёрной смородины', value: 1.0, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.4, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.15, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Развести {conc} концентрата чёрной смородины в 2–3 л подготовленной воды. Перемешать.',
+      'Добавить {sugar} сахарного сиропа. Перемешать до растворения.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус. При необходимости скорректировать сладость или кислотность.',
+      'Охладить готовую партию.',
+      'Разлить по бутылкам 300 мл, закрыть, нанести маркировку, убрать в холодильник.'
+    ],
+    note: 'Дозировка концентрата зависит от производителя — проверьте рекомендации на упаковке. Начните с 1,0 л на 10 л и корректируйте по вкусу.'
+  },
+  {
+    id: 'mors-passion',
+    category: 'Морсы',
+    name: 'Маракуйя',
+    emoji: '🥭',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Концентрат маракуйи', value: 1.0, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.4, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.1, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Развести {conc} концентрата маракуйи в 2–3 л подготовленной воды. Перемешать.',
+      'Добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус.',
+      'Охладить готовую партию.',
+      'Разлить по бутылкам 300 мл, закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Маракуйя даёт кислинку — лимонный сок можно уменьшить или не добавлять.'
+  },
+  {
+    id: 'mors-orange',
+    category: 'Морсы',
+    name: 'Апельсин',
+    emoji: '🍊',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Концентрат апельсина', value: 1.0, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.35, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.1, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Развести {conc} концентрата апельсина в 2–3 л подготовленной воды. Перемешать.',
+      'Добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус.',
+      'Охладить готовую партию.',
+      'Разлить по бутылкам 300 мл, закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Апельсин может давать лёгкую горечь — если чувствуется, уменьшите дозировку концентрата.'
+  },
+  {
+    id: 'mors-raspberry-mint',
+    category: 'Морсы',
+    name: 'Малина-мята',
+    emoji: '🍃',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Концентрат малины', value: 0.9, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.4, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.12, unit: 'л' },
+      { name: 'Мятный настой/экстракт', value: 'по рецептуре', unit: '', isCustom: true },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Развести {conc} концентрата малины в 2–3 л подготовленной воды. Перемешать.',
+      'Добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Добавить мятный настой/экстракт по утверждённой рецептуре. Перемешать.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус.',
+      'Охладить готовую партию.',
+      'Разлить по бутылкам 300 мл, закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Мятный экстракт добавляйте постепенно — он может перебить малину.'
+  },
+  {
+    id: 'mors-currant',
+    category: 'Морсы',
+    name: 'Смородина',
+    emoji: '🍇',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Концентрат смородины', value: 1.0, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.4, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.12, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Развести {conc} концентрата смородины в 2–3 л подготовленной воды. Перемешать.',
+      'Добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус.',
+      'Охладить готовую партию.',
+      'Разлить по бутылкам 300 мл, закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Уточните, какая смородина — красная или чёрная. Вкус и цвет будут разными.'
+  },
+  {
+    id: 'mors-cranberry',
+    category: 'Морсы',
+    name: 'Клюква',
+    emoji: '🔴',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Концентрат клюквы', value: 0.9, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.45, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.08, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Развести {conc} концентрата клюквы в 2–3 л подготовленной воды. Перемешать.',
+      'Добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус.',
+      'Охладить готовую партию.',
+      'Разлить по бутылкам 300 мл, закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Клюква кислая — сахарного сиропа может понадобиться больше. Корректируйте по вкусу.'
+  },
+  {
+    id: 'mors-forest-berries',
+    category: 'Морсы',
+    name: 'Лесные ягоды',
+    emoji: '🌲',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Концентрат лесных ягод', value: 1.0, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.4, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.12, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Развести {conc} концентрата лесных ягод в 2–3 л подготовленной воды. Перемешать.',
+      'Добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус.',
+      'Охладить готовую партию.',
+      'Разлить по бутылкам 300 мл, закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Вкус зависит от состава концентрата — уточните у производителя, какие ягоды в основе.'
+  },
+  {
+    id: 'mors-seaberry',
+    category: 'Морсы',
+    name: 'Облепиха',
+    emoji: '🟠',
+    baseVolume: 10,
+    ingredients: [
+      { name: 'Концентрат облепихи', value: 0.9, unit: 'л' },
+      { name: 'Сахарный сироп', value: 0.5, unit: 'л' },
+      { name: 'Лимонный сок', value: 0.08, unit: 'л' },
+      { name: 'Подготовленная холодная вода', value: 'до 10', unit: 'л', isTopUp: true }
+    ],
+    steps: [
+      'Развести {conc} концентрата облепихи в 2–3 л подготовленной воды. Перемешать.',
+      'Добавить {sugar} сахарного сиропа. Перемешать.',
+      'Добавить {lemon} лимонного сока. Перемешать.',
+      'Довести подготовленной холодной водой до {total}. Перемешать 1–2 минуты.',
+      'Оценить цвет, запах, вкус.',
+      'Охладить готовую партию.',
+      'Разлить по бутылкам 300 мл, закрыть, маркировать, убрать в холодильник.'
+    ],
+    note: 'Облепиха даёт маслянистый слой — перед розливом тщательно перемешать. Сахарного сиропа может понадобиться больше из-за кислотности.'
   }
 ];
 
@@ -780,24 +1009,34 @@ const modalContent = document.getElementById('modalContent');
 let currentDrink = null;
 let currentVolume = 10;
 
-// Хранилище цен: { drinkId: { ingredientName: { price: number, packSize: number } } }
 const priceStorage = {};
 
-// Загрузка из localStorage
-function loadPrices() {
+const packStorage = {
+  bottle: { price: '' },
+  cap: { price: '' },
+  label: { price: '' },
+  sellPrice: ''
+};
+
+function loadStorage() {
   try {
     const saved = localStorage.getItem('nebula_prices');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      Object.assign(priceStorage, parsed);
-    }
-  } catch (e) { console.warn('Не удалось загрузить цены', e); }
+    if (saved) Object.assign(priceStorage, JSON.parse(saved));
+
+    const savedPack = localStorage.getItem('nebula_pack');
+    if (savedPack) Object.assign(packStorage, JSON.parse(savedPack));
+
+    const savedSell = localStorage.getItem('nebula_sell_price');
+    if (savedSell) packStorage.sellPrice = savedSell;
+  } catch (e) { console.warn('Ошибка загрузки', e); }
 }
 
 function savePrices() {
-  try {
-    localStorage.setItem('nebula_prices', JSON.stringify(priceStorage));
-  } catch (e) { console.warn('Не удалось сохранить цены', e); }
+  try { localStorage.setItem('nebula_prices', JSON.stringify(priceStorage)); } catch (e) {}
+}
+
+function savePack() {
+  try { localStorage.setItem('nebula_pack', JSON.stringify(packStorage)); } catch (e) {}
 }
 
 function getPrice(drinkId, ingName) {
@@ -817,7 +1056,11 @@ function setPrice(drinkId, ingName, field, value) {
   savePrices();
 }
 
-// --- Рендер главного экрана ---
+function setPack(field, value) {
+  packStorage[field] = value;
+  savePack();
+}
+
 function renderHome() {
   const categories = {};
   drinks.forEach(d => {
@@ -843,7 +1086,6 @@ function renderHome() {
   app.innerHTML = html;
 }
 
-// --- Открыть напиток ---
 function openDrink(id) {
   currentDrink = drinks.find(d => d.id === id);
   currentVolume = currentDrink.baseVolume;
@@ -852,7 +1094,6 @@ function openDrink(id) {
   document.body.style.overflow = 'hidden';
 }
 
-// --- Закрыть ---
 function closeModal() {
   overlay.classList.remove('active');
   document.body.style.overflow = '';
@@ -862,7 +1103,6 @@ overlay.addEventListener('click', (e) => {
   if (e.target === overlay) closeModal();
 });
 
-// --- Форматирование чисел ---
 function formatNumber(num) {
   if (num === 0) return '0';
   if (num >= 100) return Math.round(num).toString();
@@ -876,23 +1116,17 @@ function formatMoney(num) {
   return num.toFixed(2) + ' ₽';
 }
 
-// --- Рендер модального окна ---
 function renderModal() {
   const d = currentDrink;
   const v = currentVolume;
   const ratio = v / d.baseVolume;
 
-  // Ингредиенты
   let ingHtml = '';
   d.ingredients.forEach(ing => {
     let displayValue;
-    if (ing.isTopUp) {
-      displayValue = `до ${formatNumber(v)} ${ing.unit}`;
-    } else if (ing.isCustom) {
-      displayValue = ing.value;
-    } else {
-      displayValue = `${formatNumber(ing.value * ratio)} ${ing.unit}`;
-    }
+    if (ing.isTopUp) displayValue = `до ${formatNumber(v)} ${ing.unit}`;
+    else if (ing.isCustom) displayValue = ing.value;
+    else displayValue = `${formatNumber(ing.value * ratio)} ${ing.unit}`;
     ingHtml += `
       <div class="ingredient">
         <span class="ing-name">${ing.name}</span>
@@ -901,7 +1135,6 @@ function renderModal() {
     `;
   });
 
-  // Шаги
   let stepsHtml = '';
   d.steps.forEach((step, i) => {
     let text = step;
@@ -924,41 +1157,33 @@ function renderModal() {
     `;
   });
 
-  // === БЛОК СЕБЕСТОИМОСТИ ===
   let costHtml = '';
   d.ingredients.forEach(ing => {
-    if (ing.isTopUp || ing.isCustom) return; // пропускаем воду и "по рецептуре"
+    if (ing.isTopUp || ing.isCustom) return;
     const usage = ing.value * ratio;
     const saved = getPrice(d.id, ing.name);
     const price = parseFloat(saved.price) || 0;
     const packSize = parseFloat(saved.packSize) || 0;
-
-    let costPerUnit = 0;
     let costForUsage = 0;
-    if (price > 0 && packSize > 0) {
-      costPerUnit = price / packSize;
-      costForUsage = costPerUnit * usage;
-    }
+    if (price > 0 && packSize > 0) costForUsage = (price / packSize) * usage;
 
     costHtml += `
       <div class="cost-row">
-        <div>
-          <div class="cost-name">${ing.name}</div>
-          <div class="cost-usage">Расход: ${formatNumber(usage)} ${ing.unit}</div>
-        </div>
+        <div class="cost-name">${ing.name}</div>
+        <div class="cost-usage">Расход: ${formatNumber(usage)} ${ing.unit}</div>
         <div class="cost-inputs">
-          <label>
-            Цена упаковки, ₽
-            <input type="number" inputmode="decimal" min="0" step="0.01"
+          <div class="input-field">
+            <label>Цена упак., ₽</label>
+            <input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"
               value="${saved.price}"
               oninput="onPriceInput('${d.id}', '${ing.name.replace(/'/g, "\\'")}', 'price', this.value)">
-          </label>
-          <label>
-            Объём упак., ${ing.unit}
-            <input type="number" inputmode="decimal" min="0" step="0.01"
+          </div>
+          <div class="input-field">
+            <label>Объём упак., ${ing.unit}</label>
+            <input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"
               value="${saved.packSize}"
               oninput="onPriceInput('${d.id}', '${ing.name.replace(/'/g, "\\'")}', 'packSize', this.value)">
-          </label>
+          </div>
         </div>
         <div class="cost-result" id="cost-result-${d.id}-${ing.name.replace(/\s/g, '_')}">
           ${costForUsage > 0 ? `Стоимость: ${formatMoney(costForUsage)}` : 'Введите цену и объём упаковки'}
@@ -967,16 +1192,86 @@ function renderModal() {
     `;
   });
 
+  const bottles = Math.floor(v / 0.3);
+  const packHtml = `
+    <div class="cost-row">
+      <div class="cost-name">Бутылка 300 мл</div>
+      <div class="cost-usage">Количество: ${bottles} шт</div>
+      <div class="cost-inputs">
+        <div class="input-field">
+          <label>Цена за шт, ₽</label>
+          <input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"
+            value="${packStorage.bottle.price}"
+            oninput="onPackInput('bottle', this.value)">
+        </div>
+        <div class="input-field">
+          <label>Кол-во, шт</label>
+          <input type="number" inputmode="numeric" min="0" step="1"
+            value="${bottles}" readonly>
+        </div>
+      </div>
+      <div class="cost-result" id="pack-result-bottle">
+        ${getPackResult('bottle', bottles)}
+      </div>
+    </div>
+
+    <div class="cost-row">
+      <div class="cost-name">Крышка</div>
+      <div class="cost-usage">Количество: ${bottles} шт</div>
+      <div class="cost-inputs">
+        <div class="input-field">
+          <label>Цена за шт, ₽</label>
+          <input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"
+            value="${packStorage.cap.price}"
+            oninput="onPackInput('cap', this.value)">
+        </div>
+        <div class="input-field">
+          <label>Кол-во, шт</label>
+          <input type="number" inputmode="numeric" min="0" step="1"
+            value="${bottles}" readonly>
+        </div>
+      </div>
+      <div class="cost-result" id="pack-result-cap">
+        ${getPackResult('cap', bottles)}
+      </div>
+    </div>
+
+    <div class="cost-row">
+      <div class="cost-name">Этикетка</div>
+      <div class="cost-usage">Количество: ${bottles} шт</div>
+      <div class="cost-inputs">
+        <div class="input-field">
+          <label>Цена за шт, ₽</label>
+          <input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"
+            value="${packStorage.label.price}"
+            oninput="onPackInput('label', this.value)">
+        </div>
+        <div class="input-field">
+          <label>Кол-во, шт</label>
+          <input type="number" inputmode="numeric" min="0" step="1"
+            value="${bottles}" readonly>
+        </div>
+      </div>
+      <div class="cost-result" id="pack-result-label">
+        ${getPackResult('label', bottles)}
+      </div>
+    </div>
+  `;
+
   modalContent.innerHTML = `
     <div class="modal-header">
       <h2>${d.emoji} ${d.name}</h2>
       <button class="close-btn" onclick="closeModal()">×</button>
     </div>
 
-    <div class="volume-input">
-      <label>Хочу получить:</label>
-      <input type="number" id="volumeInput" value="${v}" min="0.5" step="0.5" inputmode="decimal">
-      <span class="unit">л</span>
+    <div class="volume-box">
+      <label>Хочу получить</label>
+      <div class="volume-controls">
+        <button onclick="changeVolume(-1)">−</button>
+        <input type="number" id="volumeInput" value="${v}" min="0.5" step="0.5" inputmode="decimal">
+        <span class="unit">л</span>
+        <button onclick="changeVolume(1)">+</button>
+      </div>
     </div>
 
     <div class="section-title">Ингредиенты</div>
@@ -987,14 +1282,17 @@ function renderModal() {
 
     ${d.note ? `<div class="note">💡 ${d.note}</div>` : ''}
 
-    <div class="section-title">Расчёт себестоимости</div>
-    <div class="hint">Укажите цену упаковки и её объём — программа посчитает стоимость расхода на вашу партию.</div>
+    <div class="section-title">Себестоимость ингредиентов</div>
+    <div class="hint">Введите цену упаковки и её объём — программа посчитает стоимость расхода на партию.</div>
     <div class="cost-block">${costHtml}</div>
+
+    <div class="section-title">Упаковка</div>
+    <div class="hint">Количество бутылок, крышек и этикеток считается автоматически: ${formatNumber(v)} л ÷ 0,3 л = ${bottles} шт.</div>
+    <div class="pack-block">${packHtml}</div>
 
     <div class="totals" id="totalsBlock"></div>
   `;
 
-  // Обработчик изменения объёма
   const input = document.getElementById('volumeInput');
   input.addEventListener('input', (e) => {
     let val = parseFloat(e.target.value);
@@ -1006,14 +1304,18 @@ function renderModal() {
     newInput.setSelectionRange(newInput.value.length, newInput.value.length);
   });
 
-  // Обновить итоги
   updateTotals();
 }
 
-// --- Обработка ввода цены ---
+function changeVolume(delta) {
+  let v = currentVolume + delta;
+  if (v < 0.5) v = 0.5;
+  currentVolume = v;
+  renderModal();
+}
+
 function onPriceInput(drinkId, ingName, field, value) {
   setPrice(drinkId, ingName, field, value);
-  // Пересчитать только нужную строку и итоги
   const d = drinks.find(x => x.id === drinkId);
   const ing = d.ingredients.find(x => x.name === ingName);
   const ratio = currentVolume / d.baseVolume;
@@ -1021,11 +1323,8 @@ function onPriceInput(drinkId, ingName, field, value) {
   const saved = getPrice(drinkId, ingName);
   const price = parseFloat(saved.price) || 0;
   const packSize = parseFloat(saved.packSize) || 0;
-
   let costForUsage = 0;
-  if (price > 0 && packSize > 0) {
-    costForUsage = (price / packSize) * usage;
-  }
+  if (price > 0 && packSize > 0) costForUsage = (price / packSize) * usage;
 
   const resultId = `cost-result-${drinkId}-${ingName.replace(/\s/g, '_')}`;
   const resultEl = document.getElementById(resultId);
@@ -1034,34 +1333,52 @@ function onPriceInput(drinkId, ingName, field, value) {
       ? `Стоимость: ${formatMoney(costForUsage)}`
       : 'Введите цену и объём упаковки';
   }
+  updateTotals();
+}
+
+function onPackInput(field, value) {
+  setPack(field, value);
+  const v = currentVolume;
+  const bottles = Math.floor(v / 0.3);
+
+  const resultEl = document.getElementById(`pack-result-${field}`);
+  if (resultEl) resultEl.textContent = getPackResult(field, bottles);
 
   updateTotals();
 }
 
-// --- Итоги ---
+function getPackResult(field, bottles) {
+  const price = parseFloat(packStorage[field].price) || 0;
+  if (price <= 0) return 'Введите цену за штуку';
+  const total = price * bottles;
+  return `Стоимость: ${formatMoney(total)}`;
+}
+
 function updateTotals() {
   const d = currentDrink;
   const v = currentVolume;
   const ratio = v / d.baseVolume;
+  const bottles = Math.floor(v / 0.3);
 
-  let totalCost = 0;
+  let ingCost = 0;
   d.ingredients.forEach(ing => {
     if (ing.isTopUp || ing.isCustom) return;
     const usage = ing.value * ratio;
     const saved = getPrice(d.id, ing.name);
     const price = parseFloat(saved.price) || 0;
     const packSize = parseFloat(saved.packSize) || 0;
-    if (price > 0 && packSize > 0) {
-      totalCost += (price / packSize) * usage;
-    }
+    if (price > 0 && packSize > 0) ingCost += (price / packSize) * usage;
   });
 
-  const bottles = Math.floor(v / 0.3);
+  const bottlePrice = parseFloat(packStorage.bottle.price) || 0;
+  const capPrice = parseFloat(packStorage.cap.price) || 0;
+  const labelPrice = parseFloat(packStorage.label.price) || 0;
+  const packCost = (bottlePrice + capPrice + labelPrice) * bottles;
+
+  const totalCost = ingCost + packCost;
   const costPerBottle = bottles > 0 ? totalCost / bottles : 0;
 
-  // Цена продажи
-  const savedSellPrice = localStorage.getItem('nebula_sell_price') || '';
-  const sellPrice = parseFloat(savedSellPrice) || 0;
+  const sellPrice = parseFloat(packStorage.sellPrice) || 0;
   const revenue = sellPrice * bottles;
   const profit = revenue - totalCost;
   const profitPerBottle = bottles > 0 ? profit / bottles : 0;
@@ -1071,12 +1388,16 @@ function updateTotals() {
 
   totalsEl.innerHTML = `
     <div class="total-row">
-      <span class="label">Себестоимость партии (${formatNumber(v)} л)</span>
-      <span class="value">${formatMoney(totalCost)}</span>
+      <span class="label">Ингредиенты</span>
+      <span class="value">${formatMoney(ingCost)}</span>
     </div>
     <div class="total-row">
-      <span class="label">Бутылок 300 мл</span>
-      <span class="value">${bottles} шт</span>
+      <span class="label">Упаковка (${bottles} шт)</span>
+      <span class="value">${formatMoney(packCost)}</span>
+    </div>
+    <div class="total-row big">
+      <span class="label">Себестоимость партии</span>
+      <span class="value">${formatMoney(totalCost)}</span>
     </div>
     <div class="total-row">
       <span class="label">Себестоимость 1 бутылки</span>
@@ -1084,10 +1405,12 @@ function updateTotals() {
     </div>
 
     <div class="profit-input">
-      <label>Цена продажи 1 бутылки, ₽</label>
-      <input type="number" inputmode="decimal" min="0" step="1"
-        value="${savedSellPrice}"
-        oninput="onSellPriceInput(this.value)">
+      <div class="input-field">
+        <label>Цена продажи 1 бутылки, ₽</label>
+        <input type="number" inputmode="decimal" min="0" step="1" placeholder="0"
+          value="${packStorage.sellPrice || ''}"
+          oninput="onSellPriceInput(this.value)">
+      </div>
     </div>
 
     <div class="profit-result ${profit < 0 ? 'negative' : ''}">
@@ -1101,7 +1424,8 @@ function updateTotals() {
 }
 
 function onSellPriceInput(value) {
-  localStorage.setItem('nebula_sell_price', value);
+  packStorage.sellPrice = value;
+  savePack();
   updateTotals();
   const input = document.querySelector('.profit-input input');
   if (input) {
@@ -1110,7 +1434,6 @@ function onSellPriceInput(value) {
   }
 }
 
-// --- Ключи для подстановки ---
 function getKeyForIngredient(name) {
   const map = {
     'Чёрный чай': 'tea',
@@ -1133,13 +1456,20 @@ function getKeyForIngredient(name) {
     'Карамельный сироп': 'caramel',
     'Фисташковый сироп': 'pistachio',
     'Клубничное пюре/сироп': 'strawberry',
-    'Кокосовый напиток': 'coconut'
+    'Кокосовый напиток': 'coconut',
+    'Концентрат чёрной смородины': 'conc',
+    'Концентрат маракуйи': 'conc',
+    'Концентрат апельсина': 'conc',
+    'Концентрат малины': 'conc',
+    'Концентрат смородины': 'conc',
+    'Концентрат клюквы': 'conc',
+    'Концентрат лесных ягод': 'conc',
+    'Концентрат облепихи': 'conc'
   };
   return map[name] || null;
 }
 
-// --- Старт ---
-loadPrices();
+loadStorage();
 renderHome();
 </script>
 
